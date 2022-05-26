@@ -1,0 +1,207 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{6cba39b4-8ad9-43fb-9ce7-2c465fa03644}</ProjectGuid>
+        <MainSource>PidiSim.dpr</MainSource>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+        <DCC_DependencyCheckOutputName>PidiSim.exe</DCC_DependencyCheckOutputName>
+        <FrameworkType>VCL</FrameworkType>
+        <ProjectVersion>16.1</ProjectVersion>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <TargetedPlatforms>1</TargetedPlatforms>
+        <AppType>Application</AppType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <DCC_ExeOutput>bin</DCC_ExeOutput>
+        <DCC_DcuOutput>dcu</DCC_DcuOutput>
+        <SanitizedProjectName>PidiSim</SanitizedProjectName>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <VerInfo_MinorVer>6</VerInfo_MinorVer>
+        <VerInfo_Build>230</VerInfo_Build>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_Keys>CompanyName=seanus systems;FileDescription=Personal Integrated Dive Instrument Simulator;FileVersion=1.6.0.230;InternalName=60016;LegalCopyright=Copyright by seanus systems;LegalTrademarks=PidiSim;OriginalFilename=PidiSim.exe;ProductName=PidiSim;ProductVersion=1.6;Comments=PidiSim runs on Windows version 5.1 or higher only!</VerInfo_Keys>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <DCC_UsePackage>vcl;vclx;sdlbasepack_rt_107X7;sdlmathpack_107X7;sdlmathpack_rt_107X7;sdlchartpack_107X7;sdlchartpack_rt_107X7;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_UsePackage>vcl;vclx;sdlbasepack_rt_107X7;sdlmathpack_rt_107X7;sdlchartpack_rt_107X7;$(DCC_UsePackage)</DCC_UsePackage>
+        <Icon_MainIcon>PidiSim_Icon1.ico</Icon_MainIcon>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <Version>7.0</Version>
+        <DCC_FullBooleanEvaluations>True</DCC_FullBooleanEvaluations>
+        <DCC_DebugInformation>0</DCC_DebugInformation>
+        <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+        <DCC_OpenStringParams>False</DCC_OpenStringParams>
+        <DCC_IntegerOverflowCheck>True</DCC_IntegerOverflowCheck>
+        <DCC_RangeChecking>True</DCC_RangeChecking>
+        <DCC_PentiumSafeDivide>True</DCC_PentiumSafeDivide>
+        <DCC_StrictVarStrings>False</DCC_StrictVarStrings>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_ResourcePath>..\Components;$(DCC_ResourcePath)</DCC_ResourcePath>
+        <DCC_ObjPath>..\Components;$(DCC_ObjPath)</DCC_ObjPath>
+        <DCC_IncludePath>..\Components;$(DCC_IncludePath)</DCC_IncludePath>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_COMPARING_SIGNED_UNSIGNED>False</DCC_COMPARING_SIGNED_UNSIGNED>
+        <DCC_COMBINING_SIGNED_UNSIGNED>False</DCC_COMBINING_SIGNED_UNSIGNED>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <Version>7.0</Version>
+        <DCC_FullBooleanEvaluations>True</DCC_FullBooleanEvaluations>
+        <DCC_OpenStringParams>False</DCC_OpenStringParams>
+        <DCC_PentiumSafeDivide>True</DCC_PentiumSafeDivide>
+        <DCC_StrictVarStrings>False</DCC_StrictVarStrings>
+        <DCC_ResourcePath>..\Components;$(DCC_ResourcePath)</DCC_ResourcePath>
+        <DCC_ObjPath>..\Components;$(DCC_ObjPath)</DCC_ObjPath>
+        <DCC_IncludePath>..\Components;$(DCC_IncludePath)</DCC_IncludePath>
+        <DCC_COMPARING_SIGNED_UNSIGNED>False</DCC_COMPARING_SIGNED_UNSIGNED>
+        <DCC_COMBINING_SIGNED_UNSIGNED>False</DCC_COMBINING_SIGNED_UNSIGNED>
+        <DCC_MapFile>3</DCC_MapFile>
+        <DCC_IOChecking>False</DCC_IOChecking>
+    </PropertyGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Parameters>
+                    <Parameters Name="UseLauncher">False</Parameters>
+                    <Parameters Name="LoadAllSymbols">True</Parameters>
+                    <Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
+                </Parameters>
+                <VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+                    <VersionInfo Name="AutoIncBuild">True</VersionInfo>
+                    <VersionInfo Name="MajorVer">1</VersionInfo>
+                    <VersionInfo Name="MinorVer">2</VersionInfo>
+                    <VersionInfo Name="Release">0</VersionInfo>
+                    <VersionInfo Name="Build">256</VersionInfo>
+                    <VersionInfo Name="Debug">False</VersionInfo>
+                    <VersionInfo Name="PreRelease">False</VersionInfo>
+                    <VersionInfo Name="Special">False</VersionInfo>
+                    <VersionInfo Name="Private">False</VersionInfo>
+                    <VersionInfo Name="DLL">False</VersionInfo>
+                    <VersionInfo Name="Locale">1033</VersionInfo>
+                    <VersionInfo Name="CodePage">1252</VersionInfo>
+                </VersionInfo>
+                <VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName">seanus systems</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileDescription">Personal Integrated Dive Instrument Simulator</VersionInfoKeys>
+                    <VersionInfoKeys Name="FileVersion">1.2.0.256</VersionInfoKeys>
+                    <VersionInfoKeys Name="InternalName">60016</VersionInfoKeys>
+                    <VersionInfoKeys Name="LegalCopyright">Copyright by seanus systems</VersionInfoKeys>
+                    <VersionInfoKeys Name="LegalTrademarks">PidiSim</VersionInfoKeys>
+                    <VersionInfoKeys Name="OriginalFilename">PidiSim.exe</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductName">PidiSim</VersionInfoKeys>
+                    <VersionInfoKeys Name="ProductVersion">1.2</VersionInfoKeys>
+                    <VersionInfoKeys Name="Comments"/>
+                </VersionInfoKeys>
+                <Source>
+                    <Source Name="MainSource">PidiSim.dpr</Source>
+                </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp210.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k210.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
+            </Delphi.Personality>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">False</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="Global.pas"/>
+        <DCCReference Include="Data.pas"/>
+        <DCCReference Include="SYS.pas"/>
+        <DCCReference Include="SER.pas"/>
+        <DCCReference Include="RTC.pas"/>
+        <DCCReference Include="LCD.pas"/>
+        <DCCReference Include="ADC.pas"/>
+        <DCCReference Include="Display.pas"/>
+        <DCCReference Include="Power.pas"/>
+        <DCCReference Include="Texts.pas"/>
+        <DCCReference Include="Clock.pas"/>
+        <DCCReference Include="Sensor.pas"/>
+        <DCCReference Include="Compass.pas"/>
+        <DCCReference Include="Sonar.pas"/>
+        <DCCReference Include="Tank.pas"/>
+        <DCCReference Include="Flash.pas"/>
+        <DCCReference Include="Deco.pas"/>
+        <DCCReference Include="FMain.pas">
+            <Form>Main</Form>
+        </DCCReference>
+        <DCCReference Include="FInfo.pas">
+            <Form>Info</Form>
+        </DCCReference>
+        <DCCReference Include="FLog.pas">
+            <Form>Log</Form>
+        </DCCReference>
+        <DCCReference Include="FGui.pas">
+            <Form>Gui</Form>
+        </DCCReference>
+        <DCCReference Include="FDaq.pas">
+            <Form>Daq</Form>
+        </DCCReference>
+        <DCCReference Include="FProfile.pas">
+            <Form>Profile</Form>
+        </DCCReference>
+        <DCCReference Include="FTrack.pas">
+            <Form>Track</Form>
+        </DCCReference>
+        <DCCReference Include="FPlan.pas">
+            <Form>Plan</Form>
+        </DCCReference>
+        <DCCReference Include="FTest.pas">
+            <Form>Test</Form>
+        </DCCReference>
+        <DCCReference Include="UPidi.pas"/>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+</Project>
