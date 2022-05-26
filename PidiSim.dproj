@@ -8,7 +8,7 @@
         <FrameworkType>VCL</FrameworkType>
         <ProjectVersion>16.1</ProjectVersion>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -37,6 +37,7 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
+        <Icon_MainIcon>PidiSim.ico</Icon_MainIcon>
         <DCC_ExeOutput>bin</DCC_ExeOutput>
         <DCC_DcuOutput>dcu</DCC_DcuOutput>
         <SanitizedProjectName>PidiSim</SanitizedProjectName>
