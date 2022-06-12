@@ -14,7 +14,7 @@ object Info: TInfo
   Font.Style = []
   FormStyle = fsStayOnTop
   OldCreateOrder = False
-  Position = poScreenCenter
+  Position = poMainFormCenter
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -35,10 +35,10 @@ object Info: TInfo
     Transparent = True
   end
   object InfoLogo: TImage
-    Left = 136
-    Top = 8
-    Width = 353
-    Height = 193
+    Left = 121
+    Top = -110
+    Width = 510
+    Height = 344
     Picture.Data = {
       0A544A504547496D616765E1F90000FFD8FFE000104A46494600010101012C01
       2C0000FFDB0043000302020302020303030304030304050805050404050A0707

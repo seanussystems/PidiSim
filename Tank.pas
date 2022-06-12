@@ -1,7 +1,7 @@
 // Tank Data Receiver Functions
-// Date 25.07.17
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2007-2017 seanus systems
+// Copyright ©2007-2022 seanus systems
 
 // DELPHI simulate the Tank Data Receiver with
 // the Spin Edit 'seTankPress' on Form 'Daq'

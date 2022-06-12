@@ -281,8 +281,8 @@ object Daq: TDaq
       object cbTank: TRzCheckBox
         Left = 132
         Top = 110
-        Width = 98
-        Height = 15
+        Width = 102
+        Height = 19
         AlignmentVertical = avCenter
         BiDiMode = bdLeftToRight
         Caption = 'Tank transmitter'
@@ -296,8 +296,8 @@ object Daq: TDaq
       object cbSonar: TRzCheckBox
         Left = 132
         Top = 132
-        Width = 85
-        Height = 15
+        Width = 89
+        Height = 19
         AlignmentVertical = avCenter
         Caption = 'Sonar beacon'
         HotTrack = True
@@ -440,8 +440,8 @@ object Daq: TDaq
       object rbSaltWater: TRzRadioButton
         Left = 128
         Top = 8
-        Width = 94
-        Height = 15
+        Width = 98
+        Height = 19
         Caption = 'Sea (Saltwater)'
         Checked = True
         HotTrack = True
@@ -610,7 +610,7 @@ object Daq: TDaq
     Left = 177
     Top = 161
     Bitmap = {
-      494C010106000900100010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010106000900000010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

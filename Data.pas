@@ -1,7 +1,7 @@
 // Application Specific Data Declarations and Definitions
-// Date 26.07.17
+// Date 28.05.22
 // Norbert Koechli
-// Copyright ©2005-2017 seanus systems
+// Copyright ©2005-2022 seanus systems
 
 // Limits: Delphi sensor pressure = 80% of 20bar = 16bar = 160m (Sensor.pas)
 
@@ -24,7 +24,7 @@ uses
 
 const
   DEVSTATUS       = 4;        // development status (2=P2/P2A, 3=P3/P3A/P3B, 4=P4)
-  MAINCODE        = 'eguina'; // security code for debugging
+  MAINCODE        = 'seanus'; // security code for debugging
 
 // task control and timing
 //========================

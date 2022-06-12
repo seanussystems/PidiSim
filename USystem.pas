@@ -1,7 +1,7 @@
 // System Functions
-// Date 25.07.17
+// Date 28.05.22
 // Norbert Koechli
-// Copyright ©2004-2017 seanus systems
+// Copyright ©2004-2022 seanus systems
 
 // CAUTION: Some functions try to access to the HKEY_LOCAL_MACHINE registry key
 //          resulting in an empty string if the UAC is active on Windows Vista
@@ -46,6 +46,13 @@
 // 20.05.16 nk opt for 64-bit version
 // 27.03.17 nk fix in SetSystemTime: Regard Daylight Bias
 // 25.07.17 nk add GetAllocMemSize as replacement for deprecated AllocMemSize
+// 13.05.18 nk fix bug in GetResolution: Returns 0 if no default printer is defined
+// 14.12.18 nk fix in SetSystemTime: Regard Daylight Bias ONLY if TIME_ZONE_ID_DAYLIGHT
+// 13.07.20 nk fix D10 and beyond it is no longer possible to access strict private or private members in a helper class
+// 10.11.20 nk opt GetSystemVers add detection of Windows Server 2019
+// 30.11.20 nk add UpdateWinVersion and GetProductInfo to improve GetSystemVers to overcome the limitation of GetVersion(Ex)
+// 31.12.20 nk add procedure SortStrings to sort TStrings or TStringList
+// 09.10.21 nk add check if another instance of program is already running
 
 unit USystem;
 
@@ -68,6 +75,10 @@ const
   SC_DRAGMOVE     = $F012;  //03.02.10 nk add
   KEY_WOW64_64KEY = $0100;  //24.04.15 nk add ff
   KEY_WOW64_32KEY = $0200;
+
+  TIME_ZONE_ID_UNKNOWN  = 0; //14.12.18 nk add ff
+  TIME_ZONE_ID_STANDARD = 1;
+  TIME_ZONE_ID_DAYLIGHT = 2;
 
   PROC_INTEL    = 0;
   PROC_MIPS     = 1;
@@ -112,6 +123,7 @@ const
   AMULT         = ' kMGTPE';
   FORMERR       = '?';      //03.11.08 nk add
   UBYTE         = 'B';
+  UBYTES        = 'Bytes';  //53//10.11.20 nk add
   UHERTZ        = 'Hz';
   MHERTZ        = 'MHz';
   MILLISEC      = 'ms';     //24.11.09 nk add ff
@@ -145,6 +157,7 @@ const
   WIN12R2       = 'Windows Server 2012 R2';
   WIN_10        = 'Windows 10';          //28.11.15 nk add ff
   WINS16        = 'Windows Server 2016';
+  WINS19        = 'Windows Server 2019'; //53//10.11.20 nk add
   WINSYS32      = ' (32-bit)';           //V5//18.03.16 nk add ff
   WINSYS64      = ' (64-bit)';
 
@@ -302,9 +315,17 @@ const
   FORM_ABORTJOB = 'Print job is being aborted!';
 
   //14.04.08 nk mov / old=InfoStr - must corresponde with TAppInfo
-  InfoStrings: array[1..10] of string = ('CompanyName', 'FileDescription',
-    'FileVersion', 'InternalName', 'LegalCopyright', 'LegalTradeMarks',
-    'OriginalFileName', 'ProductName', 'ProductVersion', 'Comments');
+  InfoStrings: array[1..10] of string = (
+    'CompanyName',
+    'FileDescription',
+    'FileVersion',
+    'InternalName',
+    'LegalCopyright',
+    'LegalTradeMarks',
+    'OriginalFileName',
+    'ProductName',
+    'ProductVersion',
+    'Comments');
 
   //21.11.09 nk opt / add SERVICE_NOP / old=SERVICE_PAUSED
   InfoService: array[NERR_SUCCESS..SERVICE_NOP] of string = (
@@ -319,6 +340,8 @@ const
     'Unknown service status!');
 
 type  //03.09.09 nk mov up
+  NET_API_STATUS = DWORD; //53//30.11.20 nk add
+
   //21.09.09 nk add msPTotal..msXFree / opt new ordering
   TMemSize = (msTotal, msFree, msUsed, msPTotal, msPFree, msVTotal, msVFree,
               msXFree, msPLoad, msBlock, msHeap, msProc, msSpace, msUncom,
@@ -441,6 +464,10 @@ var
   ProductAgent: string;  //Mail Sender Vers. 1.6 by seanus systems
   ProductTitle: string;  //01.04.16 nk add
 
+  OSVI: TOSVersionInfo;  //53//30.11.20 nk add ff
+  OSVIA: TOsVersionInfoA;
+  OSVIX: TOSVersionInfoEx;
+
   function IsEven(Val: Byte): Boolean; //V5//06.08.15 nk add
   function Iff(const Condition: Boolean; const TruePart, FalsePart: Variant): Variant; //25.11.10 nk add
   function Digits(const Val: Cardinal): Byte;    //30.07.09 nk add
@@ -460,7 +487,7 @@ var
   function StrCount(Input: string; Search: Char): Integer;
   function StrNum(Input: string): string;            //16.02.10 nk add
   function CutNum(Input: string): string;            //V5//07.10.15 nk add
-  function StrVers(Version: string): Single;
+  function StrVers(Version: string; StartNum: Integer = 1): Single; //28.09.19 nk add StartNum
   function StrToIntRange(Input: string; Lmin, Lmax: Integer): Integer; //V5//18.11.16 nk add
   function StrToClock(Seconds: Integer): TDateTime;  //20.12.14 nk add
   function StrToVers(Version: string): Single;       //18.11.08 nk opt
@@ -513,7 +540,7 @@ var
   function GetMemoryEx(SizeType: TMemSize): Int64; //05.09.13 nk opt (was missed!?!)
   function GetPhysicalMemory: string;  //19.09.09 nk add
   function GetVirtualMemory: string;   //21.09.09 nk add
-  function GetAllocMemSize: Integer;   //25.07.17 nk add
+  function GetAllocMemSize: Cardinal;  //28.05.22 nk old=Integer / 25.07.17 nk add
   function GetProcessList(ProcList: TStrings; Filter: string = cEMPTY): Integer; //14.04.08 nk add
   function GetProcessMemory(InPercent: Boolean = False; ProcHandle: Cardinal = 0): Int64; //27.11.15 nk add InPercent
   function GetProcessID(ProgName: string): Cardinal;  //04.11.07 nk add
@@ -582,6 +609,7 @@ var
   function SetFormIcon(FormHandle: HWND; IconName: string): Integer; //V5//28.12.15 nk add
   function SetSystemTime(SysTime: TDateTime): Boolean;   //V5//05.01.17 nk add
   function MessageSend(ProgName, Text: string; UseClass: Boolean = False): Boolean; //V5//11.07.16 nk add
+  function UpdateWinVersion: string;  //53//30.11.20 nk add
   procedure SetBackGround(BitMap: string);
   procedure SetTopWindow(Win: HWND; Restore: Bool); stdcall; //10.04.08 nk add
   procedure SetDefaultPrinter(PrinterName: string); //06.07.08 nk add
@@ -631,16 +659,26 @@ var
   procedure ClearMouseBuffer;
   procedure RemoveZombies;     //16.12.07 nk add
   procedure TrimAppMemorySize; //02.06.11 nk add
+  procedure SortStrings(Strings: TStrings; Duplicates: TDuplicates = dupAccept); //31.12.20 nk add
 
 implementation
 
 function GlobalMemoryStatusEx(var lpBuffer: TMemoryStatusEx): BOOL; stdcall;
-  external kernel32;  //21.09.09 nk add
+  external API_KERNEL;   //21.09.09 nk add
+
+function GetProductInfo(dwOSMajorVersion, dwOSMinorVersion, dwSpMajorVersion, dwSpMinorVersion: DWORD; var pdwReturnedProductType: DWORD): BOOL; stdcall;
+  external API_KERNEL;   //53//30.11.20 nk add
+
+function NetServerGetInfo(Servername: PWideChar; Level: DWORD; var Bufptr: Pointer): NET_API_STATUS; stdcall;
+  external API_NETAPI; //53//30.11.20 nk add
+
+function NetApiBufferFree(Bufptr: Pointer): NET_API_STATUS; stdcall;
+  external API_NETAPI; //53//30.11.20 nk add
 
 procedure SetTopWindow(Win: HWND; Restore: Bool); stdcall;
   external user32 Name SHELL_SWITCH;
   //use like 'SetTopWindow(FindWindow('notepad', nil), True);
-  //NOTE: Better use SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NoMove or SWP_NoSize);
+  //NOTE: Better use SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE);
 
 function Iff(const Condition: Boolean; const TruePart, FalsePart: Variant): Variant;
 begin //25.11.10 nk add - Replacement for the C ternary conditional operator ? (JEDI JclSysUtils)
@@ -1004,19 +1042,19 @@ begin
   end;
 end;
 
-function StrVers(Version: string): Single;
-var //xe//extract the version in the format V.R from given string
+function StrVers(Version: string; StartNum: Integer = 1): Single;
+var //28.09.19 nk add StartNum - extract the version in the format V.R from given string
   i: Integer;  //old version handles only one decimal point
   temp: string;
 begin
   temp := cEMPTY;
 
-  for i := 1 to Length(Version) do begin
+  for i := StartNum to Length(Version) do begin //22.09.19 nk old=1 => allow numbers in file name like 'Ped4Sim'
     if CharInSet(Version[i], ALL_FLOATS) then
       temp := temp + Version[i]; //xe//
   end;
 
-  if not TryStrToFloat(temp, Result) then Result := NADA;
+  if not TryStrToFloat(temp, Result) then Result := NADA; //CAUTION: Result may be inaccurate! (e.g. '5.1' -> 5.0997483)
 end;
 
 function StrToVers(Version: string): Single;
@@ -1525,7 +1563,7 @@ begin
 end;
 
 function GetOrganisation: string;
-var //24.04.15 nk add - return registerd organisation name
+var //24.04.15 nk add - return registerd organization name
   reg: TRegistry; //Read only - else needs admin privilege!
 begin
   Result := cEMPTY;
@@ -1679,15 +1717,20 @@ begin
 end;
 
 function SetSystemTime(SysTime: TDateTime): Boolean;
-var //V5//27.03.17 nk opt
+var //51//14.12.18 nk opt
+  tzret: Cardinal; //14.12.18 nk add
   dtset: TDateTime;
   tbias: Variant;
   tinfo: TTimeZoneInformation;
   stime: TSystemTime;
 begin
-  GetTimeZoneInformation(tinfo);
-  tbias := (tinfo.Bias + tinfo.DaylightBias) / 1440; //V5//27.03.17 nk add DaylightBias
-  dtset := SysTime + tbias;
+  tzret := GetTimeZoneInformation(tinfo); //14.12.18 nk opt ff - regard Daylight Bias ONLY if in Daylight time
+  tbias := tinfo.Bias;
+
+  if tzret = TIME_ZONE_ID_DAYLIGHT then
+    tbias := tbias + tinfo.DaylightBias; //V5//27.03.17 nk add DaylightBias
+
+  dtset := SysTime + tbias / 1440;
 
   with stime do begin
     wYear   := StrToInt(FormatDateTime('yyyy', dtset));
@@ -1835,7 +1878,7 @@ begin
   FormatList.Clear;
   if Printer.Printers.Count = 0 then Exit;
 
-  Printer.PrinterIndex := NONE; //standard printer
+  Printer.PrinterIndex := NONE; //default printer
   Printer.GetPrinter(device, driver, port, mode);
   Result := WinSpool.DeviceCapabilities(device, port, DC_PAPERNAMES, nil, nil);
 
@@ -1886,17 +1929,20 @@ begin
 end;
 
 function GetResolution(Device: TDevType): Integer;
-var //27.05.10 nk opt - return the resolution of the requested device type [dpi]
+var //51//13.05.18 nk opt - return the resolution of the requested device type [dpi]
   win: HDC; //19.06.07 nk old THandle;
 begin
-  Result := CLEAR;
-  if Printer.Printers.Count = 0 then Exit; //27.05.10 nk add
+//Result := CLEAR; //51//13.05.18 nk fix / mov down ff
+//if Printer.Printers.Count = 0 then Exit;
 
   if Device = dtPrinter then begin
+    Result := 300; //51//add
+    if Printer.Printers.Count = 0 then Exit; //51//13.05.18 nk fix / mov down
     win := Printer.Handle;
     if win <> NERR_SUCCESS then
       Result := GetDeviceCaps(win, LOGPIXELSX);
   end else begin
+    Result := 96; //51//add
     win := GetDC(HWND_DESKTOP);
     if win <> NERR_SUCCESS then begin //19.06.07 nk opt
       try
@@ -2405,7 +2451,7 @@ begin
 //Result := 'Total: ' + mt + ' / Free: ' + mf;
 end;
 
-function GetAllocMemSize: Integer;
+function GetAllocMemSize: Cardinal; //28.05.22 nk old=Integer
 //25.07.17 nk add (replacement for deprecated AllocMemSize)
 {$IF CompilerVersion >= 18}
 var
@@ -2477,7 +2523,7 @@ var //return process priority from given program name (like 'nero.exe') or -1 if
   // 24 - RealTime  REALTIME_PRIORITY_CLASS
 begin
   Result := NONE;
-  ProgName := UpperCase(progName);
+  ProgName := UpperCase(ProgName);
   hwin := CreateToolHelp32SnapShot(TH32CS_SNAPPROCESS, 0);
 
   if hwin > NERR_SUCCESS then begin
@@ -2667,66 +2713,209 @@ begin
   end;
 end;
 
+function UpdateWinVersion: string;
+type //53//30.11.20 nk add
+  PSERVER_INFO_101 = ^SERVER_INFO_101;
+  _SERVER_INFO_101 = record
+    sv101_platform_id:   DWORD;
+    sv101_name:          LPWSTR;
+    sv101_version_major: DWORD;
+    sv101_version_minor: DWORD;
+    sv101_type:          DWORD;
+    sv101_comment:       LPWSTR;
+  end;
+  SERVER_INFO_101 = _SERVER_INFO_101;
+  TServerInfo101  = SERVER_INFO_101;
+  PServerInfo101  = PSERVER_INFO_101;
+
+  pfnRtlGetVersion = function(var {$IFDEF RAD6PLUS}RTL_OSVERSIONINFOEXW{$ELSE}TOSVersionInfoEx{$ENDIF}): Longint; stdcall;
+var
+  ptype: Cardinal;
+  Buffer: Pointer;
+  Edition: string;
+  ver: {$IFDEF RAD6PLUS}RTL_OSVERSIONINFOEXW{$ELSE}TOSVersionInfoEx{$ENDIF};
+  RtlGetVersion: pfnRtlGetVersion;
+
+  procedure ResetMemory(out P; Size: Longint);
+  begin
+    if Size > 0 then begin
+      Byte(P) := 0;
+      FillChar(P, Size, 0);
+    end;
+  end;
+
+begin
+  Result := cEMPTY;
+  Buffer := nil;
+  RtlGetVersion := pfnRtlGetVersion(GetProcAddress(GetModuleHandle('ntdll.dll'), 'RtlGetVersion'));
+
+  if Assigned(RtlGetVersion) then begin
+    ResetMemory(ver, SizeOf(ver));
+    ver.dwOSVersionInfoSize := SizeOf(ver);
+    if RtlGetVersion(ver) = 0 then begin
+      OSVIX.dwMajorVersion := ver.dwMajorVersion;
+      OSVIX.dwMinorVersion := ver.dwMinorVersion;
+      OSVIX.dwBuildNumber  := ver.dwBuildNumber;
+      OSVIX.dwPlatformId   := ver.dwPlatformId;
+      StrCopy(OSVIX.szCSDVersion, ver.szCSDVersion);
+    end;
+  end else begin
+    if NetServerGetInfo(nil, 101, Buffer) = NO_ERROR then begin
+      try
+        OSVIX.dwMajorVersion := PServerInfo101(Buffer)^.sv101_version_major;
+        OSVIX.dwMinorVersion := PServerInfo101(Buffer)^.sv101_version_minor;
+      finally
+        NetApiBufferFree(Buffer);
+      end;
+    end;
+  end;
+
+  GetProductInfo(OSVIX.dwMajorVersion, OSVIX.dwMinorVersion, OSVIX.wServicePackMajor, OSVIX.wServicePackMinor, ptype);
+
+  case ptype of
+    PRODUCT_BUSINESS                         : Edition := 'Business';
+    PRODUCT_BUSINESS_N                       : Edition := 'Business N';
+    PRODUCT_CLUSTER_SERVER                   : Edition := 'HPC Edition';
+    PRODUCT_DATACENTER_SERVER                : Edition := 'Datacenter Full';
+    PRODUCT_DATACENTER_SERVER_CORE           : Edition := 'Datacenter Core';
+    PRODUCT_DATACENTER_SERVER_CORE_V         : Edition := 'Datacenter without Hyper-V Core';
+    PRODUCT_DATACENTER_SERVER_V              : Edition := 'Datacenter without Hyper-V Full';
+    PRODUCT_ENTERPRISE                       : Edition := 'Enterprise';
+    PRODUCT_ENTERPRISE_E                     : Edition := 'Enterprise E';
+    PRODUCT_ENTERPRISE_N                     : Edition := 'Enterprise N';
+    PRODUCT_ENTERPRISE_SERVER                : Edition := 'Enterprise Full';
+    PRODUCT_ENTERPRISE_SERVER_CORE           : Edition := 'Enterprise Core';
+    PRODUCT_ENTERPRISE_SERVER_CORE_V         : Edition := 'Enterprise without Hyper-V Core';
+    PRODUCT_ENTERPRISE_SERVER_IA64           : Edition := 'Enterprise for Itanium-based Systems';
+    PRODUCT_ENTERPRISE_SERVER_V              : Edition := 'Enterprise without Hyper-V Full';
+    PRODUCT_HOME_BASIC                       : Edition := 'Home Basic';
+    PRODUCT_HOME_BASIC_E                     : Edition := 'Home Basic E';
+    PRODUCT_HOME_BASIC_N                     : Edition := 'Home Basic N';
+    PRODUCT_HOME_PREMIUM                     : Edition := 'Home Premium';
+    PRODUCT_HOME_PREMIUM_E                   : Edition := 'Home Premium E';
+    PRODUCT_HOME_PREMIUM_N                   : Edition := 'Home Premium N';
+    PRODUCT_HYPERV                           : Edition := 'Microsoft Hyper-V Server';
+    PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT : Edition := 'Windows Essential Business Server Management Server';
+    PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING  : Edition := 'Windows Essential Business Server Messaging Server';
+    PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY   : Edition := 'Windows Essential Business Server Security Server';
+    PRODUCT_PROFESSIONAL                     : Edition := 'Professional';
+    PRODUCT_PROFESSIONAL_E                   : Edition := 'Professional E';
+    PRODUCT_PROFESSIONAL_N                   : Edition := 'Professional N';
+    PRODUCT_SERVER_FOR_SMALLBUSINESS         : Edition := 'Essential Solutions';
+    PRODUCT_SERVER_FOR_SMALLBUSINESS_V       : Edition := 'Without Hyper-V for Windows Essential Server Solutions';
+    PRODUCT_SERVER_FOUNDATION                : Edition := 'Foundation';
+    PRODUCT_SMALLBUSINESS_SERVER             : Edition := 'Small Business';
+    PRODUCT_STANDARD_SERVER                  : Edition := 'Standard Full';
+    PRODUCT_STANDARD_SERVER_CORE             : Edition := 'Standard Core';
+    PRODUCT_STANDARD_SERVER_CORE_V           : Edition := 'Standard without Hyper-V Core';
+    PRODUCT_STANDARD_SERVER_V                : Edition := 'Standard without Hyper-V Full';
+    PRODUCT_STARTER                          : Edition := 'Starter';
+    PRODUCT_STARTER_E                        : Edition := 'Starter E';
+    PRODUCT_STARTER_N                        : Edition := 'Starter N';
+    PRODUCT_STORAGE_ENTERPRISE_SERVER        : Edition := 'Storage Server Enterprise';
+    PRODUCT_STORAGE_EXPRESS_SERVER           : Edition := 'Storage Server Express';
+    PRODUCT_STORAGE_STANDARD_SERVER          : Edition := 'Storage Server Standard';
+    PRODUCT_STORAGE_WORKGROUP_SERVER         : Edition := 'Storage Server Workgroup';
+    PRODUCT_UNDEFINED                        : Edition := 'An unknown product';
+    PRODUCT_ULTIMATE                         : Edition := 'Ultimate';
+    PRODUCT_ULTIMATE_E                       : Edition := 'Ultimate E';
+    PRODUCT_ULTIMATE_N                       : Edition := 'Ultimate N';
+    PRODUCT_WEB_SERVER                       : Edition := 'Web Server Full';
+    PRODUCT_WEB_SERVER_CORE                  : Edition := 'Web Server Core';
+    PRODUCT_CORE                             : Edition := 'Home';
+    PRODUCT_CORE_N                           : Edition := 'Home N';
+    PRODUCT_CORE_COUNTRYSPECIFIC             : Edition := 'Home China';
+    PRODUCT_CORE_SINGLELANGUAGE              : Edition := 'Home Single Language';
+  { PRODUCT_MOBILE_CORE                      : Edition := 'Mobile';
+    PRODUCT_MOBILE_ENTERPRISE                : Edition := 'Mobile Enterprise';
+    PRODUCT_EDUCATION                        : Edition := 'Education';
+    PRODUCT_EDUCATION_N                      : Edition := 'Education N'; }
+  end;
+
+  if Edition = cEMPTY then begin
+    if OSVIX.wSuiteMask and VER_SUITE_EMBEDDEDNT <> 0 then
+      Edition := 'Embedded'
+    else if OSVIX.wSuiteMask and VER_SUITE_ENTERPRISE <> 0 then
+      Edition := 'Enterprise';
+  end;
+
+  if Is64BitSystem then
+    Result := Edition + WINSYS64
+  else
+    Result := Edition + WINSYS32;
+end;
+
 function GetSystemVers(VersType: TVersType): string;
-var //28.11.15 nk opt - improved version with detection for Win2008, Win7,
-  ptyp: Byte;        // Win2008R2, Win8, Win2012, Win10, Win2016
+var //30.11.20 nk opt - improved version with detection for Win2008, Win7,
+  ptyp: Byte;        // Win2008R2, Win8, Win2012, Win10, Win2016, Win2019
   i: Integer;
-  vmaj: Integer;
-  vmin: Integer;
-  bnum: Integer;
+  vmaj: Cardinal; //53//old=Integer
+  vmin: Cardinal; //53//old=Integer
+  bnum: Cardinal; //53//old=Integer
+  smaj: Cardinal; //53//add Service Pack Major Version
+  smin: Cardinal; //53//add Service Pack Minor Version
+  prod: Cardinal; //53//add Product Type
+  plid: Cardinal; //53//add Platform ID
+
   pnum: Integer; //13.09.13 nk add (service pack number like 2)
   otyp: string;
   pack: string;
   desc: string;
-  via: TOsVersionInfoA;
-  viw: TOsVersionInfoEx;
+  edit: string;   //53//30.11.20 nk add edition
+//via: TOsVersionInfoA;  //53//30.11.20 nk opt - use global OSVI_ types
+//viw: TOsVersionInfoEx;
+
 begin
   Result := cEMPTY;
   otyp   := cEMPTY;
   pack   := cEMPTY;
   desc   := cEMPTY;
+  edit   := cEMPTY; //53//30.11.20 nk add ff
 
   try //calling GetVersionExW - if that fails try using GetVersionExA
-    viw.wProductType := WORKSTATION;
+    OSVIX.wProductType := WORKSTATION;
 
     if GetVersion and $80000000 = 0 then begin
-      ZeroMemory(@viw, SizeOf(viw));
-      viw.dwOSVersionInfoSize := SizeOf(TOsVersionInfoEx);
+      ZeroMemory(@OSVIX, SizeOf(OSVIX));
+      OSVIX.dwOSVersionInfoSize := SizeOf(TOsVersionInfoEx);
 
-      if not GetVersionExW(POsVersionInfo(@viw)^) then begin
-        viw.dwOSVersionInfoSize := SizeOf(TOsVersionInfow);
-        GetVersionExW(POsVersionInfo(@viw)^);
+      if not GetVersionExW(POsVersionInfo(@OSVIX)^) then begin
+        OSVIX.dwOSVersionInfoSize := SizeOf(TOsVersionInfow);
+        GetVersionExW(POsVersionInfo(@OSVIX)^);
       end;
 
-      Move(viw, via, SizeOf(via));
+      Move(OSVIX, OSVIA, SizeOf(OSVIA));
 
-      for i := Low(via.szCSDVersion) to high(via.szCSDVersion) do
-        via.szCSDVersion[i] := AnsiChar(viw.szCSDVersion[i]);
+      for i := Low(OSVIA.szCSDVersion) to high(OSVIA.szCSDVersion) do
+        OSVIA.szCSDVersion[i] := AnsiChar(OSVIX.szCSDVersion[i]);
     end else begin
-      ZeroMemory(@via, SizeOf(via));
-      via.dwOSVersionInfoSize := SizeOf(via);
-      GetVersionExA(via);
+      ZeroMemory(@OSVIA, SizeOf(OSVIA));
+      OSVIA.dwOSVersionInfoSize := SizeOf(OSVIA);
+      GetVersionExA(OSVIA);
     end;
-
-    vmaj := via.dwMajorVersion;
-    vmin := via.dwMinorVersion;
-    bnum := via.dwBuildNumber;
-    ptyp := viw.wProductType;
-    pack := string(via.szCSDVersion);     //like 'Service Pack 3'
-    pnum := StrToIntDef(StrNum(pack), 0); //13.09.13 nk add - service pack number like 3 (0 = none)
   except
     Exit;
   end;
 
+  edit := UpdateWinVersion;             //53//30.11.20 nk add ff
+  vmaj := OSVIX.dwMajorVersion;         //53//30.11.20 nk mov ff down
+  vmin := OSVIX.dwMinorVersion;
+  bnum := OSVIX.dwBuildNumber;
+  ptyp := OSVIX.wProductType;
+  plid := OSVIA.dwPlatformId;
+  pack := string(OSVIX.szCSDVersion);   //like 'Service Pack 3'
+  pnum := StrToIntDef(StrNum(pack), 0); //13.09.13 nk add - service pack number like 3 (0 = none)
+
 // Operating system otyp    Vers.  vmaj   vmin  ptyp
 // -----------------------------------------------------------------------------
 // Windows 10               10.0   10     0     WORKSTATION
+// Windows Server 2019      10.0   10     0     SERVER
 // Windows Server 2016      10.0   10     0     SERVER
 // Windows 8.1               6.3    6     3     WORKSTATION
 // Windows Server 2012 R2    6.3    6     3     SERVER
 // Windows 8                 6.2    6     2     WORKSTATION
 // Windows Server 2012       6.2    6     2     SERVER
-// Windows 7                 6.1    6     1     ORKSTATION
+// Windows 7                 6.1    6     1     WORKSTATION
 // Windows Server 2008 R2    6.1    6     1     SERVER
 // Windows Server 2008       6.0    6     0     SERVER
 // Windows Vista             6.0    6     0     WORKSTATION
@@ -2735,8 +2924,8 @@ begin
 // Windows XP                5.1    5     1     Not applicable
 // Windows 2000              5.0    5     0     Not applicable
 
-  case via.dwPlatformId of
-    VER_PLATFORM_WIN32_NT:  //Windows NT/2K/XP/Vista/2003/2008/Win7/Win8/WinS8/Win10/WinS16
+  case plid of //53//old=via.dwPlatformId
+    VER_PLATFORM_WIN32_NT:   //Windows NT/2K/XP/Vista/2003/2008/Win7/Win8/WinS8/Win10/WinS16/WinS19
       case vmaj of
         0..3 : otyp := WIN32;                   //Windows 32 (old NT)
         4    : otyp := WINNT;                   //Windows NT 4.0
@@ -2771,10 +2960,14 @@ begin
                    otyp := WINNT;               //Windows NT (new version)
                end;
         10   : case vmin of                     //28.11.15 nk add ff
-                 0 : if ptyp = WORKSTATION then
-                       otyp := WIN_10           //Windows 10
+                 0 : if ptyp = WORKSTATION then begin
+                       otyp := WIN_10;          //Windows 10
+                     end else begin
+                       if bnum < 17677 then     //53//30.11.20 nk add/opt ff
+                         otyp := WINS16         //Windows Server 2016
                      else
-                       otyp := WINS16;          //Windows Server 2016
+                         otyp := WINS19;        //Windows Server 2019
+                     end;
                end;
         else
           otyp := WINNT;                        //Windows NT (new version)
@@ -3695,6 +3888,26 @@ begin
   Application.ProcessMessages;
 end;
 
+function ExecuteEmbedded(FileName, ProgCaption: string; Params: PChar; ProgParent: THandle; PathName: string = cEMPTY): THandle;
+var //17.03.15 nk add - launch FileName inside ProgParent Panel or Form
+  abort: Integer;
+begin
+  Result := NERR_SUCCESS;
+  abort  := MAXLOOP;
+
+  if PathName <> cEMPTY then SetCurrentDir(PathName);
+  ExecCode := ShellExecute(Application.Handle, SHELL_EXEC, PChar(FileName), Params, nil, SW_NORMAL);
+
+  while (Result = NERR_SUCCESS) and (abort > 0) do begin
+    Dec(abort);
+    Result := FindWindow(nil, PChar(ProgCaption));
+    Delay(WAIT_DELAY);
+  end;
+
+  Windows.SetParent(Result, ProgParent);
+  Windows.ShowWindow(Result, SW_SHOWMAXIMIZED);
+end;
+
 procedure ExecuteAsAdmin(FileName, Params: string; PathName: string = cEMPTY);
 var //xe//27.11.09 nk add - Elevates the program to Admin privileges in Vista's UAC
   info: TShellExecuteInfoA;       //NOT YET TESTED!
@@ -3715,26 +3928,6 @@ begin
 
   if not ShellExecuteEx(@info) then
     RaiseLastOSError; 
-end;
-
-function ExecuteEmbedded(FileName, ProgCaption: string; Params: PChar; ProgParent: THandle; PathName: string = cEMPTY): THandle;
-var //17.03.15 nk add - launch FileName inside ProgParent Panel or Form
-  abort: Integer;
-begin
-  Result := NERR_SUCCESS;
-  abort  := MAXLOOP;
-
-  if PathName <> cEMPTY then SetCurrentDir(PathName);
-  ExecCode := ShellExecute(Application.Handle, SHELL_EXEC, PChar(FileName), Params, nil, SW_NORMAL);
-
-  while (Result = NERR_SUCCESS) and (abort > 0) do begin
-    Dec(abort);
-    Result := FindWindow(nil, PChar(ProgCaption));
-    Delay(WAIT_DELAY);
-  end;
-
-  Windows.SetParent(Result, ProgParent);
-  Windows.ShowWindow(Result, SW_SHOWMAXIMIZED);
 end;
 
 procedure SetAdminShield(Control: TWinControl; Requiered: Boolean);
@@ -3927,7 +4120,7 @@ begin
 end;
 
 procedure PrintText(Header: string; Text: TRichEdit);
-var //27.05.10 nk opt
+var //51//23.06.18 nk opt
   plain: Boolean;
   dpix: Extended;
   dpiy: Extended;
@@ -3952,7 +4145,7 @@ begin
     end;
 
     PageRect  := area;
-    Print(Name);
+    Print(Header); //51//old=Name
     PlainText := plain;
   end;
 end;
@@ -4170,10 +4363,10 @@ begin
 end;
 
 function CheckMinSystem(MinVers: string): Boolean;
-var //return True if Windows version is at least MinVers
+var //28.09.19 nk opt - return True if Windows version is at least MinVers
   vact, vmin: Single;
-begin
-  vmin   := StrVers(MinVers); //get minimum required version in the format 'V.R'
+begin //28.09.19 nk add StartNum = 10 to ignore numbers in file name like 'Ped4Bim'
+  vmin   := StrVers(MinVers, 10);           //get minimum required version in the format 'V.R'
   vact   := StrVers(GetSystemVers(vtVers)); //get actual system version
   Result := (vact >= vmin);
 end;
@@ -4723,6 +4916,27 @@ begin
   end;
 end;
 
+procedure SortStrings(Strings: TStrings; Duplicates: TDuplicates = dupAccept);
+var //31.12.20 nk add - see https://www.delphipraxis.net/40816-tstrings-sortieren.html
+  list: TStringList;
+begin
+  Assert(Assigned(Strings), 'SortStrings: Invalid arg');
+  if Strings is TStringList then begin
+    TStringList(Strings).Duplicates := Duplicates;
+    TStringList(Strings).Sort;
+  end else begin
+    list := TStringList.Create;
+    try
+      list.Duplicates := Duplicates;
+      list.Sorted := True;
+      list.Assign(Strings);
+      Strings.Assign(list);
+    finally
+      list.Free;
+    end;
+  end;
+end;
+
 {$IFDEF VCLSTYLES} //V5//28.12.15 nk add ff - fix bug in VCL styles regarding LoadIcon
                    //see: http://stackoverflow.com/questions/10257353/delphi-xe2-vcl-styles-changing-window-icon-doesnt-update-on-the-caption-bar-un
 procedure PatchCode(Address: Pointer; const NewCode; Size: Integer);
@@ -4759,11 +4973,15 @@ type
     function GetIconAddress: Pointer;
   end;
 
+// NOTE: In D10 and beyond it is no longer possible to access strict private or private members of the helpee in a helper.
+//       Use the trick below to overcome this problem.
+
 function TFormStyleHookHelper.GetIconFastAddress: Pointer;
 var
   MethodPtr: function: TIcon of object;
 begin
-  MethodPtr := Self.GetIconFast;
+  with Self do
+    MethodPtr := GetIconFast; //D10//old=Self.GetIconFast
   Result := TMethod(MethodPtr).Code;
 end;
 
@@ -4771,7 +4989,8 @@ function TFormStyleHookHelper.GetIconAddress: Pointer;
 var
   MethodPtr: function: TIcon of object;
 begin
-  MethodPtr := Self.GetIcon;
+  with Self do
+    MethodPtr := GetIcon; //D10//old=Self.GetIcon
   Result := TMethod(MethodPtr).Code;
 end;
 {$ENDIF}
@@ -4831,6 +5050,16 @@ initialization
   ProductTitle      := Format(FORM_HEADER, [FileDescription, ProductVersion, LegalCopyright]); //01.04.16 nk add
   ProductAgent      := Format(FORM_AGENT,  [ProductName, ProductVersion]);
 
+  //10.10.21 nk add ff - check if another instance of program is already running
+  if (OriginalFileName <> cEMPTY) and (FileName <> cEMPTY) then begin
+    MutexHandle := CreateMutex(nil, True, PChar(FileName));
+    if GetLastError = ERROR_ALREADY_EXISTS then begin
+      Beep(3000, 200);
+      ShowMessage('Another instance of ' + FileName + ' is already running!');
+      Halt;
+    end;
+  end;
+
   //16.04.08 nk add - check minimum Windows version
   if Comments <> cEMPTY then begin
     if not CheckMinSystem(Comments) then begin
@@ -4862,6 +5091,7 @@ initialization
   ScreenDelay := GetScreenSaver;
 
 finalization //25.11.10 nk opt
+
   if MutexHandle <> NERR_SUCCESS then begin
     ReleaseMutex(MutexHandle);
     CloseHandle(MutexHandle);

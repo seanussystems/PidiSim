@@ -1,7 +1,7 @@
 // Application Specific Multilingual Text Strings
-// Date 05.05.07
+// Date 28.05.22
 // Norbert Koechli
-// Copyright ©2005-2007 seanus systems
+// Copyright ©2005-2022 seanus systems
 
 // Read text lines from internal resource compiled into 'Tiger.res'
 // from Tiger include file 'Texts.inc'
@@ -95,9 +95,9 @@ begin
     ok := False;
     texts.LoadFromStream(rcdat);
 
-    for l := 0 to texts.Count - 1 do begin
+     for l := 0 to texts.Count - 1 do begin
       line := texts[l];
-      typ := CutLine(line, n);
+      typ  := CutLine(line, n);
 
       if (typ >= TYPLANG) and (typ < MAXLANG) then begin
         if typ = LangNum then
@@ -152,7 +152,7 @@ end;
 //------------------------------------------------------------------------------
 // CUTLINE - Cut text lines to extract Tiger multilingual text strings
 //   DELPHI function only
-//------------------------------------------------------------------ 17.02.07 --
+//------------------------------------------------------------------ 28.05.22 --
 function CutLine(var Line: string; var Num: Long): Long;
 var
   i: Long;
@@ -163,21 +163,21 @@ var
   temp: string;
 begin
   Result := MAXLANG;
-  Num := TYPLANG;
-  cut := 0;
-  temp := Line;
-  Line := sEMPTY;
-  numb := sEMPTY;
-  text := sEMPTY;
+  Num    := TYPLANG;
+  cut    := 0;
+  temp   := Line;
+  Line   := sEMPTY;
+  numb   := sEMPTY;
+  text   := sEMPTY;
 
-  if Pos('LangNum = LANGEN', temp) > 0 then Result := LANGEN;
-  if Pos('LangNum = LANGDE', temp) > 0 then Result := LANGDE;
-  if Pos('LangNum = LANGFR', temp) > 0 then Result := LANGFR;
-  if Pos('LangNum = LANGIT', temp) > 0 then Result := LANGIT;
-  if Pos('LangNum = LANGES', temp) > 0 then Result := LANGES;
+  if Pos('LANGEN', temp) > 0 then Result := LANGEN;
+  if Pos('LANGDE', temp) > 0 then Result := LANGDE;
+  if Pos('LANGFR', temp) > 0 then Result := LANGFR;
+  if Pos('LANGIT', temp) > 0 then Result := LANGIT;
+  if Pos('LANGES', temp) > 0 then Result := LANGES;
 
-  if Pos('  Mask$(', temp) > 0 then Result := TYPMASK;
-  if Pos('  Help$(', temp) > 0 then Result := TYPHELP;
+  if Pos('Mask$(', temp) > 0 then Result := TYPMASK;
+  if Pos('Help$(', temp) > 0 then Result := TYPHELP;
 
   if Result >= TYPLANG then Exit;
 
@@ -198,11 +198,11 @@ begin
   numb := Trim(numb); // 09.03.07 nk del try..except
 
   if TryStrToInt(numb, Num) then begin
-    text := Trim(text);  // 1st trim, 2nd replace => leave spaces
-    Line := StringReplace(text, '"', sEMPTY, [rfReplaceAll]);
+    text   := Trim(text);  // 1st trim, 2nd replace => leave spaces
+    Line   := StringReplace(text, '"', sEMPTY, [rfReplaceAll]);
   end else begin
-    Line := sEMPTY;
-    Num := TYPLANG;
+    Line   := sEMPTY;
+    Num    := TYPLANG;
     Result := MAXLANG;
   end;
 end;

@@ -1,11 +1,7 @@
 // Dive Profile Chart
-// Date 26.05.22
+// Date 12.06.22
 // Norbert Koechli
 // Copyright ©2005-2022 seanus systems
-
-// 03.06.07 nk upd to SDL TRChart (x = Time, y = Depth and Ceiling)
-// 20.10.07 nk upd to SDL Component Suite 9.0 for Delphi 2007
-// 26.05.22 nk upd to SDL Component Suite 10.7 for Delphi XE7
 
 unit FProfile;
 
@@ -13,7 +9,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Forms, Dialogs, ExtCtrls, StdCtrls, ComCtrls, SDL_Sdlbase, SDL_Rchart,
+  Forms, Dialogs, ExtCtrls, StdCtrls, ComCtrls, gl_base, DepthChart,
   USystem, UGraphic, URegistry, SYS, Global, Data, Texts, Clock, FLog, UPidi;
 
 type
@@ -21,7 +17,7 @@ type
     ProfileLoop: TTimer;
     ProfileStatus: TStatusBar;
     ProfilePanel: TPanel;
-    ProfileChart: TRChart; //20.10.07 nk upd to vers 9.0
+    ProfileChart: TDepthChart; // 12.06.22 nk upd to Dive Charts Vers 2.0
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormMoving(var Msg: TwmMoving); message WM_MOVING;
@@ -79,6 +75,7 @@ begin
     BevelOuter := bvNone;
     Ctl3D := False;
     Caption := sEMPTY;
+    Cursor := crCross;
     DoubleBuffered := True;
     UseDockManager := False;
   end;
@@ -92,7 +89,6 @@ begin
     Align := alClient;
     AutoRedraw := True;
     Isometric := False;
-    Cursor := crCross;
     Caption := sEMPTY;
     ChartColor := COLORWATER;
     DataColor := COLORTRACK;

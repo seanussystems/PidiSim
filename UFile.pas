@@ -1,7 +1,7 @@
 // File and Disk Functions
-// Date 10.01.17
+// Date 20.04.20
 // Norbert Koechli
-// Copyright ©2006-2017 seanus systems
+// Copyright ©2006-2020 seanus systems
 
 { TODO : Add TSortMode to GetFiles }
 
@@ -29,8 +29,15 @@
 // 08.04.16 nk add ReplaceInXML to replace strings in an UTF-8 encoded file
 // 20.05.16 nk opt for 64-bit version
 // 10.01.17 nk opt replace all cSTAR by ALLOF
+// 10.08.18 nk add CopyDir, CopyFilesProgress, and OpenExplorer
+// 15.08.18 nk opt DeleteDir - file errors are ignored and message dialog suppressed (set FOF_NOERRORUI)
+// 19.11.19 nk add FindFileInSubdirs - check if at least one matching file is in subdirectories
+// 20.04.20 nk opt undefine 'TCAD' to include UGraphic enabling GetImageCheckSum
 
-{ File Attributes (defined in SysUtils)
+{
+  see also System.IOUtils.TDirectory
+
+  File Attributes (defined in SysUtils)
   ===============
   faReadOnly    1  write protected file
   faHidden      2  hidden file
@@ -134,6 +141,7 @@
   CSIDL_SYSTEM 			          -> C:\Windows\system32
   CSIDL_PROGRAM_FILES 		    -> C:\Program Files
   CSIDL_PROGRAM_FILES_COMMON 	-> C:\Program Files\Common Files
+  CSIDL_COMMON_DOCUMENTS      -> C:\All Users\Documents
 
   Result of 'GetFolderPath' under Windows XP
 
@@ -158,7 +166,8 @@ interface
 uses //UGraphic / 06.03.12 nk add Graphics
   Windows, Forms, Classes, Math, SysUtils, StrUtils, StdCtrls, ComCtrls, ComObj,
   Messages, Dialogs, Grids, Graphics, ImageHlp, ShellApi, ZLib, SHFolder,
-  UGlobal, USystem, UGraphic;
+  {$IFNDEF TCAD} UGraphic, {$ENDIF} //52//20.04.20 nk add
+  UGlobal, USystem;
 
 type //23.06.13 nk add fmNoFdel / 09.06.12 nk add fmTrim / 27.02.12 nk add fmNoTemp / 22.06.11 nk add fmLim3 / 26.04.08 nk add fmDirs, fmFiles
   TFindMode = set of (fmCase, fmWord, fmSwap, fmAnsi, fmClear, fmExt, fmSort,
@@ -206,6 +215,7 @@ const
   FILEDEL   = '_';      //23.06.13 nk add
   EXTDEL    = '.';      //V5//23.06.16 nk add
   MYDIR     = '.';
+  UPDIR     = '..';     //52//19.11.19 nk add
   CUTDIR    = '...';
   ALLOF     = '*';
   NONEOF    = '!';      //29.07.12 nk add
@@ -299,13 +309,17 @@ const
 
 var
   FileSubDir: Integer;       //V5//23.06.16 nk add
+  FileMatching: Integer;     //52//19.11.19 nk add
   FileError: TFileError;
   FileListing: TStringList;  //28.12.09 nk add
 
   function CheckDir(var DirName: string): Boolean;
   function CheckFile(var FilName: string): Boolean;
+  function CopyDir(const FromDir, ToDir: string): Boolean; //09.08.18 nk add
   function GetCheckSum(FilName: string): DWORD;         //26.08.09 nk add
+{$IFNDEF TCAD} //52//20.04.20 nk add
   function GetImageCheckSum(FilName: string): Integer;  //06.03.12 nk add
+{$ENDIF}
   function GetDrive: string;
   function GetDriveFree: Char;                          //05.09.13 nk old=GetDiveFree / 24.07.10 nk add
   function GetDriveLetter(VolumeLabel: string; NoFloppy: Boolean): Char; //25.07.10 nk add
@@ -341,6 +355,7 @@ var
   function GetFiles(FilName: string; FileList: TStrings; Mode: TFindMode): Integer;
   function GetFileFilter(DirName: string; FileList: TStrings; FDel: TCharSet; FLen: Byte = 0; Ignore: string = cEMPTY): Integer; //01.08.12 nk add Ignore / 16.12.10 nk add
   function GetFileCount(DirName, FilName: string; WithDir: Boolean = False): Integer; //22.09.12 nk add WithDir
+  function FindFileInSubdirs(DirName, FilName: string): Boolean; //52//19.11.19 nk add
   function GetFileInfo(FilName: string): TFileInfo;  //03.08.07 nk old=TFileName
   function GetFileEncoding(FilName: string): string; //08.06.11 nk add
   function GetLongFileName(FilName: string): string;
@@ -351,7 +366,7 @@ var
   function ExpandEnvPath(Path: string): string;  //24.03.08 nk add
   function ExtractFileBody(FilName: string): string;   //17.07.07 nk add
   function TrashFile(FilName: string): Boolean;
-  function DeleteDir(DirName: string): Boolean;
+  function DeleteDir(DirName: string; HideDialog: Boolean = True): Boolean; //06.02.19 nk opt/old=HideDialog: Boolean = False
   function DeleteFiles(DirName, FilName: string; Size: Integer = 0): Integer;
   function DeleteLines(FilName, Search: string; Mode: TFindMode; Encoding: string = FILE_ENCODING): Integer; //16.07.07 nk add
   function CopyFileAdv(Source, Dest, FilName: string): string;  //12.12.10 nk add
@@ -367,18 +382,34 @@ var
   function WriteSignature(FilName: string; Signature: AnsiString): Integer; //xe//12.01.08 nk add ff
   function ReadSignature(FilName: string): AnsiString;                      //xe//
   function CopyFileProgress(Source, Dest: string; Progress: TProgressBar): Boolean;
+  function CopyFilesProgress(Source, Dest, FilName: string; Progress: TProgressBar): Integer;  //10.08.18 nk add
   function OperFileShell(Source, Dest: string; Oper: TFileOper; Head: string = cEMPTY): Boolean; //24.03.08 nk add Head
   function OpenFileProperties(FilName: string): Boolean; //07.12.09 nk add
   function LockFile(FilName, Locked: string): Boolean; //07.05.07 nk add
   procedure ExtractResource(ResType: PChar; ResName, FilName: string);  //xe//13.01.08 nk add ff
   procedure CompressFile(FilIn, FilOut: string);
   procedure DecompressFile(FilIn, FilOut: string);
+  procedure OpenExplorer(AFolder: string); //11.08.18 nk add
   procedure ShowFileInfo(FilName: string; ListBox: TListBox);
   procedure ReadALine(var ReadFile: Text; var ReadString: string; Encoding: string = FILE_ENCODING);        //08.06.11 nk add
   procedure WriteALine(var WriteFile: Text; WriteString: string; Encoding: string = FILE_ENCODING);         //08.06.11 nk add
   procedure SetFileEncoding(FilName: string; HeadLine: string = COMMENT; Encoding: string = FILE_ENCODING); //21.06.11 nk add
 
 implementation
+
+function CopyDir(const FromDir, ToDir: string): Boolean;
+var //15.08.18 nk opt - call like: if CopyDir('D:\download', 'E:\') then...
+  fos: TSHFileOpStruct;
+begin
+  ZeroMemory(@fos, SizeOf(fos));
+  with fos do begin
+    wFunc  := FO_COPY;
+    fFlags := FOF_SILENT or FOF_NOCONFIRMMKDIR or FOF_FILESONLY or FOF_NOCONFIRMATION or FOF_NOERRORUI;
+    pFrom  := PChar(FromDir + cNUL);
+    pTo    := PChar(ToDir   + cNUL);
+  end;
+  Result := (ShFileOperation(fos) = NERR_SUCCESS);
+end;
 
 function CheckDir(var DirName: string): Boolean;
 // Try to normalize given directory name and check if it exists
@@ -579,6 +610,7 @@ begin
   end;
 end;
 
+{$IFNDEF TCAD} //52//20.04.20 nk add
 function GetImageCheckSum(FilName: string): Integer;
 var //29.07.12 nk opt
   i, j, cs: Integer;
@@ -606,6 +638,7 @@ begin
   Result := Abs(cs);
   bmp.Free;
 end;
+{$ENDIF}
 
 function GetDrives(DiskType: TDiskType; DriveList: TStrings): Integer;
 // Return the number and a list of all drives of the requested type
@@ -1602,7 +1635,7 @@ begin
 
   try
     if FileExists(FilName) then DeleteFile(FilName);
-    //28.12.09 nk opt buff := TStringList.Create;
+
     FileListing.Clear;
 
     if NoDups then begin  //05.07.08 nk add
@@ -1613,7 +1646,6 @@ begin
     with Grid do begin
       for r := FixedRows to RowCount - 1 do begin
         temp := StringReplace(Rows[r].CommaText, cQUOTE, cEMPTY, [rfReplaceAll]);
-        //buff.Add(temp);
         FileListing.Append(temp);
       end;
     end;
@@ -1718,13 +1750,13 @@ begin
 end;
 
 function GetFileCount(DirName, FilName: string; WithDir: Boolean = False): Integer;
-var //22.09.12 nk opt - Get number of files (and subdirectories) in DirName
-  frec: TSearchRec;   //DirName with trailing slash
-begin
+var //52//19.11.19 nk opt - Get number of files (and subdirectories) in DirName
+  frec: TSearchRec;   //DirName with or w/o trailing slash
+begin                 //FilName may have wildcards like '*.pas'
   Result    := NERR_SUCCESS;
   FileError := feNoError;
   FilName   := Trim(FilName);
-  DirName   := Trim(DirName);
+  DirName   := IncludeTrailingBackslash(Trim(DirName)); //52//19.11.19 nk opt
 
   if (FilName = cEMPTY) or (DirName = cEMPTY) then begin
     FileError := feEmptyParameter;
@@ -1736,6 +1768,32 @@ begin
       if (WithDir or (frec.Attr <> faDirectory)) and (frec.Name[1] <> MYDIR) then Inc(Result);
     until FindNext(frec) <> NERR_SUCCESS;
     FindClose(frec);
+  end;
+end;
+
+function FindFileInSubdirs(DirName, FilName: string): Boolean;
+var //52//19.11.19 nk add - return True if at least one matching file is in subdirectories
+  frec: TSearchRec;       //DirName with or w/o trailing slash
+begin                     //FilName as substring like 'Data' or '.swn' (w/o '*')
+  Result    := False;     //Output: Global FileMatching (clear before call this function)
+  FileError := feNoError;
+  FilName   := Trim(FilName);
+  DirName   := IncludeTrailingBackslash(Trim(DirName));
+
+  if FindFirst(DirName + ALLFILES, faAnyFile or faDirectory, frec) = 0 then begin
+    try
+      repeat
+        if (frec.Attr and faDirectory) = NERR_SUCCESS then begin
+          if Pos(FilName, frec.Name) > 0 then
+            Inc(FileMatching);
+        end else begin
+          if (frec.Name <> MYDIR) and (frec.Name <> UPDIR) then
+            FindFileInSubdirs(DirName + frec.Name, FilName);
+        end;
+      until FindNext(frec) <> NERR_SUCCESS;
+    finally
+      FindClose(frec);
+    end;
   end;
 end;
 
@@ -1768,7 +1826,7 @@ begin
       wFunc                 := FO_DELETE;
       pFrom                 := from;
       pTo                   := nil;
-      fFlags                := FOF_ALLOWUNDO or FOF_NOCONFIRMATION or FOF_SILENT;
+      fFlags                := FOF_ALLOWUNDO or FOF_NOCONFIRMATION or FOF_SIMPLEPROGRESS; //51/old=FOF_SILENT //FOF_ALLOWUNDO = move to Recycle bin
       fAnyOperationsAborted := False;
       hNameMappings         := nil;
     end;
@@ -1779,7 +1837,8 @@ begin
   end;
 end;
 
-function DeleteDir(DirName: string): Boolean;
+function DeleteDir(DirName: string; HideDialog: Boolean = True): Boolean;
+// 06.02.19 nk opt/old=HideDialog: Boolean = False
 // DirName = 'C:\test.txt'  - delete the file
 // DirName = 'C:\test'      - delete the (empty) folder
 // DirName = 'C:\test\*.*') - delete all files in the folder
@@ -1801,7 +1860,10 @@ begin
 
     with info do begin
       wFunc  := FO_DELETE;
-      fFlags := FOF_SILENT or FOF_NOCONFIRMATION;
+      if HideDialog then //51//11.08.18 nk opt ff
+        fFlags := FOF_NOCONFIRMATION or FOF_NOERRORUI or FOF_SILENT             //06.02.19 nk add FOF_NOERRORUI
+      else
+        fFlags := FOF_NOCONFIRMATION or FOF_NOERRORUI or FOF_SIMPLEPROGRESS;    //15.08.18 nk add FOF_NOERRORUI
       pFrom  := PChar(DirName + cNUL);
     end;
     
@@ -1904,6 +1966,45 @@ begin                     //Attr < 0 removes copied files attribute(s)
             FileSetAttr(fname, att xor -Attrib);
         end;
         Application.ProcessMessages;    //23.09.12 nk add - do not block application
+      end;
+    until FindNext(frec) <> NERR_SUCCESS;
+
+    FindClose(frec);
+  end;
+end;
+
+function CopyFilesProgress(Source, Dest, FilName: string; Progress: TProgressBar): Integer;
+var //10.08.18 nk add - Copy file(s) FilName from Source to Dest folder with the same name and show progress
+  fname: string;          //FilName may have wildcards like '*.pas'
+  frec: TSearchRec;       //Source and Dest are folders (full path needed with or without trailing slash)
+begin
+  Result            := NONE;
+  FileError         := feNoError;
+  Source            := Trim(Source);
+  Dest              := Trim(Dest);
+  FilName           := Trim(FilName);
+  Progress.Position := CLEAR;
+//FileListing.Clear;
+
+  if (Source = cEMPTY) or (Dest = cEMPTY) or (FilName = cEMPTY) then begin
+    FileError := feEmptyParameter;
+    Exit;
+  end;
+
+  Source := IncludeTrailingPathDelimiter(Source);
+  Dest   := IncludeTrailingPathDelimiter(Dest);
+
+  if FindFirst(Source + FilName, faAnyFile, frec) = NERR_SUCCESS then begin
+    Result := CLEAR;
+
+    repeat
+      if (frec.Attr <> faDirectory) and (frec.Name[1] <> MYDIR) then begin
+        fname := Dest + frec.Name;
+        CopyFile(Pchar(Source + frec.Name), PChar(fname), False);
+        Inc(Result);
+      //FileListing.Append(fname);
+        Progress.Position := Result + 1;
+        Application.ProcessMessages;    //do not block application
       end;
     until FindNext(frec) <> NERR_SUCCESS;
 
@@ -2319,7 +2420,7 @@ begin
       CloseFile(tfile);
     end;
   except
-    CloseFile(tfile);  //13.05.09 nk add
+  //CloseFile(tfile);  //12.01.18 nk del (is done in try..finally)
     FileError := feException;
     Result    := NERR_SUCCESS;
   end;
@@ -2794,7 +2895,7 @@ begin
   Head      := Trim(Head);
 
   try
-    if (Source = cEMPTY) or (Dest = cEMPTY) then begin
+    if (Source = cEMPTY) or ((Dest = cEMPTY) and (Oper <> foDelete)) then begin //11.08.18 nk opt
       FileError := feEmptyParameter;
       Exit;
     end;
@@ -2814,7 +2915,10 @@ begin
 
       wnd   := Application.Handle;
       pFrom := PChar(Source + cNUL); //must end with #0#0
-      pTo   := PChar(Dest   + cNUL); //nil for foDelete
+      if Oper = foDelete then        //11.08.18 nk opt
+        pTo := nil                   //nil for foDelete
+      else
+        pTo := PChar(Dest + cNUL);
 
       fFlags := FOF_NOCONFIRMATION or FOF_SIMPLEPROGRESS or FOF_NOCONFIRMMKDIR;
       fAnyOperationsAborted := aborted;
@@ -3348,6 +3452,16 @@ begin                         //25.10.10 nk add fmShareDenyNone
   end;
 end;
 
+procedure OpenExplorer(AFolder: string);
+begin //11.08.18 nk add
+  ShellExecute(Application.Handle,
+    PChar('explore'),
+    PChar(AFolder),
+    nil,
+    nil,
+    SW_SHOWNORMAL);
+end;
+
 procedure ShowFileInfo(FilName: string; ListBox: TListBox);
 var //V5//20.05.16 nk opt
   info: TFileInfo;
@@ -3406,6 +3520,7 @@ begin //V5//16.04.16 nk opt - write an Unicode string to an UTF-8 encoded file (
 end;
 
 initialization //28.12.09 nk add ff
+  FileMatching := 0; //52//19.11.19 nk add
   FileSubDir  := 1; //V5//23.06.16 nk add
   FileListing := TStringList.Create;
 

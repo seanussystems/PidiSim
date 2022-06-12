@@ -1,7 +1,7 @@
 // Interface to RTC Device Driver (Real Time Clock)
-// Date 25.07.17
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2007-2017 seanus systems
+// Copyright ©2007-2022 seanus systems
 
 // 25.07.17 nk opt for XE3 (AnsiString <-> string)
 // 25.07.17 nk opt use string instead of ShortString (e.g. old=string[MAXBUFF])
@@ -64,9 +64,9 @@ procedure InitRtc(Mode: Byte);
 var
   r: Long;
 begin
-  RtcCtr := cCLEAR;
-  ErrCode := cOFF;
-  RtcInit := cOFF;
+  RtcCtr   := cCLEAR;
+  ErrCode  := cOFF;
+  RtcInit  := cOFF;
   RtcEvent := RTCINITIAL;
 
   while RtcEvent < RTCFAILED do begin  // wait until driver is installed
@@ -233,37 +233,41 @@ end;
 procedure Get_RTC(Mode: Byte; var Time: Long);
 var
   ret: Boolean;
-  nul, act: TDateTime;
   sek: LongWord;
+  nul, act: TDateTime;
   tlocal: TSystemTime;
 begin
+  SetLastError(cCLEAR); //26.05.22 nk add - clear last error
+
   case Mode of
     RTCTIME: begin
       try
-        act := Now;
-        nul := EncodeDate(FIRSTYEAR, 01, 01);  // 01.01.2000
-        sek := SecondOfTheDay(act);
+        act  := Now;
+        nul  := EncodeDate(FIRSTYEAR, 01, 01);  // 01.01.2000
+        sek  := SecondOfTheDay(act);
         Time := sek + SEC_DAY * (Trunc(act - nul));
       except
         ErrCode := cERROR;
-        Time := cCLEAR;
+        Time    := cCLEAR;
       end;
     end;
 
     RTCMODE: begin
       try // check RTC hardware
         GetLocalTime(tlocal);
-        ret := SetLocalTime(tlocal);
+        ret  := SetLocalTime(tlocal); //26.05.22 nk fix - must have the SE_SYSTEMTIME_NAME privilege
+        ret  := True;
         Time := RTCPRESENT;
       except
-        ret := False;
+        ret  := False;
       end;
 
       if ret = True then begin
         Time := RTCPRESENT;
       end else begin
-        ErrCode := cERROR;
-        Time := RTCFAILED;
+        ErrCode  := cERROR;
+        Time     := RTCFAILED;
+        LogEvent('Get_RTC', 'SetLocalTime failed!', GetLastErrorText); //26.05.22 nk add
       end;
     end;
 

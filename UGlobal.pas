@@ -1,7 +1,7 @@
 // Global Constants and Definitions
-// Date 16.02.17
+// Date 03.08.21
 // Norbert Koechli
-// Copyright ©2004-2017 seanus systems
+// Copyright ©2004-2021 seanus systems
 
 // 08.09.07 nk opt replace NULL with NADA (null is reserved by Variants!!)
 // 08.09.07 nk opt collect all time/date formates in UGlobal
@@ -9,6 +9,7 @@
 // 29.09.10 nk upd to Delphi XE (2011) Unicode UTF-16LE (Code site 1200)
 // 10.10.10 nk add new button captions 'Save'...
 // 20.02.14 nk upd to Delphi XE3 (VER240 Version 24)
+// 03.08.21 nk add all non defined ASCII constants from 0..32
 
 // Character encoding scheme is Unicode UTF-16LE (Code site 1200)
 // ASCII Character Code Table is 'Windows West' (7-Bit only #0..#127)
@@ -209,6 +210,8 @@ const
   txChange    = 'Change';      //mbYes         mrYes         20.10.14 nk add
   txOverwrite = 'Overwrite';   //mbYes         mrYes         22.09.12 nk add
   txStart     = 'Start';       //mbYes         mrYes         04.10.13 nk add
+  txStop       = 'Stop';       //mbYes         mrYes         06.08.17 nk add
+  txSkip       = 'Skip';       //mbYes         mrYes         06.08.17 nk add
   txRestart   = 'Restart';     //mbYes         mrYes         31.05.11 nk add
   txCreate    = 'Create';      //mbYes         mrYes         31.05.11 nk add
   txDelete    = 'Delete';      //mbYes         mrYes         11.10.10 nk add
@@ -216,20 +219,26 @@ const
   txImport    = 'Import';      //mbYes         mrYes         11.10.10 nk add
   txConvert   = 'Convert';     //mbYes         mrYes         08.02.13 nk add
   txDownload  = 'Download';    //mbYes         mrYes         //V5//17.05.15 nk add
+  txUpdate     = 'Update';     //mbYes         mrYes         //51//05.05.18 nk add
+  txInstall    = 'Install';    //mbYes         mrYes         //52//22.12.19 nk add
   tx3DWorld   = '3D World';    //mbYes         mrYes         27.05.12 nk del '-' / 08.10.11 nk add
+  txContinue   = 'Continue';   //52//04.02.20 nk add
+  txAgree      = 'Agree';      //52//04.02.20 nk add
   txHelp      = 'Help';        //mbHelp
   txPlay      = 'Play';        //mbYes                       16.05.12 nk add
-
+  txTrue       = 'True';       //52//31.01.20 nk add
+  txFalse      = 'False';      //52//31.01.20 nk add
   txApply     = 'Apply';       //12.04.11 nk add ff
   txRetain    = 'Retain';
   txUnknown   = 'Unknown';     //16.09.09 nk add
   txEnabled   = 'Enabled';     //25.11.10 nk add ff
   txDisabled  = 'Disabled';
-  txInstall   = 'Installed';
+  txInstalled  = 'Installed';                                 //52//22.12.19 nk old=txInstall
   txAvail     = 'Available';   //29.11.10 nk add ff
   txNotAvail  = 'Not available';
   txNoPrint   = 'No printer installed!';     //27.05.10 nk add
   txNoDefPrint= 'No default printer found!'; //V5//16.02.17 nk add
+  txNotAgain   = 'Do not show it again';     //52//04.02.20 nk add
 
   //30.10.10 nk mov from UFile
   BoolValues: array[Boolean] of string = ('No', 'Yes');
@@ -341,6 +350,7 @@ const
   RAD90    = PI / 2.0;    //90 deg in rad
   RAD180   = PI;          //180 deg in rad  30.05.09 nk add
   RAD360   = PI * 2.0;    //31.03.15 nk add
+  SQRTPI   = 1.772453851; //52//11.12.19 nk add
 
   YDFT     = 3;           //31.07.09 nk add 1yd = 3ft
   FTIN     = 12;          //10.12.07 nk add 1ft = 12in   //old=12.0
@@ -353,16 +363,44 @@ const
   COFFSET  = 32;          // °C -> °F temp offset 32°C
   KELVIN   = 273.15;      // °C -> °K temp offset 0°K = -273.15°C
 
+  //53//03.08.21 nk add all non defined constants
   cNUL     = #0;          //18.07.07 nk old=cNULL
-  cEOT     = #4;          //05.11.07 nk add
-  cACK     = #6;
+  cSOH     = #1;          //53//Start of Header
+  cSTX     = #2;          //53//Start of Text
+  cETX     = #3;          //53//End of Text
+  cEOT     = #4;          //05.11.07 nk add End of Transmission
+  cENQ     = #5;          //53//Enquiry
+  cACK     = #6;          //Acknowledge
+  cBEL     = #7;          //53//Bell
   cBAK     = #8;          //18.07.07 nk old=cBACKSPACE
-  cTAB     = #9;          //tabulator
+  cTAB     = #9;          //Tabulator
   cLF      = #10;
-  cCR      = #13;
-  cNAK     = #21;         //06.11.07 nk add
-  cESC     = #27;
+  cVT      = #11;         //53//Vertical Tab
+  cFF      = #12;         //53//Form Feed
+  cCR      = #13;         //Carriage Return
+  cSO      = #14;         //53//Shift Out
+  cSI      = #15;         //53//Shift In
+  cDLE     = #16;         //53//Dataline Escape
+  cDC1     = #17;         //53//DC1
+  cXON     = #17;         //53//XON
+  cDC2     = #18;         //53//DC2
+  cDC3     = #19;         //53//DC3
+  cXOF     = #19;         //53//XOFF
+  cDC4     = #20;         //53//DC4
+  cERR     = #20;         //53//Error (defined by nk)
+  cNAK     = #21;         //06.11.07 nk add - Negative Acknowledge
+  cSYN     = #22;         //53//Synchronous Idle
+  cEOB     = #23;         //53//End of Transmission Block
+  cCAN     = #24;         //53//Cancel
+  cEOM     = #25;         //53//End of Medium
+  cSUB     = #26;         //53//Substitiude
+  cESC     = #27;         //Escape
+  cFS      = #28;         //53//File Separator
+  cGS      = #29;         //53//Group Separator
+  cRS      = #30;         //53//Record Separator
+  cUS      = #31;         //53//Unit Separator
   cNONE    = #32;         //xe//old=#160
+
   cDEL     = #127;        //01.07.08 nk add
   cDIS     = #160;        //06.11.11 nk add
   CRLF     = #13#10;      //carriage return / line feed
@@ -385,6 +423,7 @@ const
   cSTAR    = '*';
   cEQUAL   = '=';
   cULINE   = '_';
+  cNADA    = 'x';         //52//03.02.20 nk add
   cAMPER   = '&';
   cDOT     = '.';
   cQUEST   = '?';
@@ -419,8 +458,10 @@ const
   cBULLET  = ' • ';       //03.10.08 nk add
   cDARR    = ' » ';       //09.01.08 nk add ff
   cINDENT  = '   ';
+  cNAV     = 'n/a';       //52//10.12.19 nk add
   cHIDDEN  = '******';    //06.08.11 nk add hidden password
   cERROR   = ' Error !';  //27.02.16 nk add
+  cFREE    = 'free';      //53//11.1.20 nk add
 
   //time and date constants  //23.12.08 nk add ff
   USEC_MIN    = 60000000;    // microseconds per minute
@@ -489,6 +530,7 @@ const
   UNIT_MIN    = 'min';
   UNIT_DPI    = 'dpi';
   WEB_SITE    = 'www';   //09.05.12 nk add
+  WEB_HTTP    = 'http';  //02.02.19 nk add
 
   FORM_SORTID = '%3.1d'; //17.08.15 nk add
   FORM_HEX    = '%0.2X'; //30.11.10 nk add

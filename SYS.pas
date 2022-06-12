@@ -1,7 +1,7 @@
 // Interface to SYS (Processor Hardware and Runtime System)
-// Date 26.07.17
+// Date 28.05.22
 // Norbert Koechli
-// Copyright ©2007-2017 seanus systems
+// Copyright ©2007-2022 seanus systems
 
 // 25.07.17 nk opt for XE3 (AnsiString <-> string)
 // 25.07.17 nk opt use string instead of ShortString (e.g. old=string[MAXBUFF])
@@ -17,7 +17,6 @@ uses
 const
   COMPILER_NAME = 'Embarcadero Delphi'; // 26.07.17 nk old=Borland
   COMPILER_VERS = CompilerVersion;
-//SYSTEM_NAME   = WIN32;
 
   DEVMAX        = 19;     // number of supported devices
   RUN           = 0;      // processor runtime system
@@ -163,6 +162,7 @@ const
   VERSFORM      = '%.2X';       // version format (HEX)
   ADDRFORM      = '%.3Xh';      // address format (HEX)
 
+  SPACE         = ' ';          // 28.05.22 nk add
   VERSTEXT      = ' Vers.';
   TIMUNIT       = ' Hz';        // TIM standard unit
   GENUNIT       = ' ns';        // GEN standard unit
@@ -397,8 +397,8 @@ end;
 //------------------------------------------------------------------ 25.07.17 --
 procedure ErrorHandler(Task, Error: string);
 var
-  errtask: string; //old=[MAXERR];
-  errtext: string; //old=[MAXERR];
+  errtask: string;
+  errtext: string;
 begin
   ErrCode := GetLastError;  // get error code (decimal long)
   errtext := Trim(Error);
@@ -423,10 +423,9 @@ begin
   end;
 
   timestamp := Ticks;          // get timestamp
-
-  modul := Trim(ErrModul);
-  text  := Trim(ErrText);
-  val   :=  Trim(ErrVal);
+  modul    := Trim(ErrModul);
+  text     := Trim(ErrText);
+  val      := Trim(ErrVal);
 
   if ErrNum > SYSNOERR then begin
     num := Format(ERRFORM, [ErrNum]) + sCOLON;  // make HEX string
@@ -453,11 +452,10 @@ var
   val: string;
 begin
   timestamp := Ticks;          // get timestamp
-
-  modul := Trim(LogModul);
-  text  := Trim(LogText);
-  val   := Trim(LogVal);
-  text  := IntToStr(timestamp) + sCOLON + modul + sCOLON + text + sSPACE + val;
+  modul     := Trim(LogModul);
+  text      := Trim(LogText);
+  val       := Trim(LogVal);
+  text      := IntToStr(timestamp) + sCOLON + modul + sCOLON + text + sSPACE + val;
 
   Log.Print(text);
 end;
@@ -710,16 +708,16 @@ begin
 
   if DevNum >= DEVMAX then begin  // get version of all loaded device drivers
     ErrLog := cOFF;               // supress errors from not loaded drivers
-    dmin := 1;
-    dmax := DEVMAX - 1;
+    dmin   := 1;
+    dmax   := DEVMAX - 1;
   end else begin                  // get version of specified device driver
-    dmin := DevNum;
-    dmax := DevNum;
+    dmin   := DevNum;
+    dmax   := DevNum;
   end;
 
   for dev := dmin to dmax do begin
-    ErrCode := SYSNOERR;         // get version of device driver
-    ver := DevVers[dev];         // SYSNOERR if not loaded
+    ErrCode := SYSNOERR;          // get version of device driver
+    ver     := DevVers[dev];      // SYSNOERR if not loaded
 
     if ver <> SYSNOERR then begin // driver has been successfully loaded
       GetVers(ver, Vers);
@@ -734,13 +732,12 @@ end;
 
 //------------------------------------------------------------------------------
 // GETSYSTEM - Get name and version of runtime system
-//------------------------------------------------------------------ 17.02.07 --
+//------------------------------------------------------------------ 28.05.22 --
 procedure GetSystem(var Vers: string);
 begin
   Vers       := GetSystemVers(vtBuild);
-  SystemName := GetSystemVers(vtName);
-
-  SysBuff := SystemName + VERSTEXT;
+  SystemName := GetSystemVers(vtName) + SPACE + UpdateWinVersion; //28.05.22 nk add UpdateWinVersion
+  SysBuff    := SystemName + VERSTEXT;
   LogEvent('Runtime system', SysBuff, Vers);
 end;
 
@@ -751,8 +748,7 @@ procedure GetProcessor(var Vers: string);
 begin
   Vers     := GetProcessorVers(vtVers);
   ProcType := GetProcessorVers(vtShort);
-
-  SysBuff := ProcType + VERSTEXT;
+  SysBuff  := ProcType + VERSTEXT;
   LogEvent('Processor module', SysBuff, Vers);
 end;
 
@@ -795,11 +791,11 @@ begin
   SysBuff := IntToStr(Free);
   LogEvent('User flash size', SysBuff, MEMUNIT);
 
-  ret := Free div MEMSECTSIZE;       // number of user flash sectors
+  ret     := Free div MEMSECTSIZE;   // number of user flash sectors
   SysBuff := IntToStr(ret);
   LogEvent('User flash sectors', SysBuff, sEMPTY);
 
-  ret := MEMSECTSIZE;                // size of flash sectors
+  ret     := MEMSECTSIZE;            // size of flash sectors
   SysBuff := IntToStr(ret);
   LogEvent('Flash sector size', SysBuff, MEMUNIT);
 end;
@@ -844,12 +840,12 @@ begin
   SysBuff := IntToStr(SYSMAXSTACK); // program stack size [bytes]
   LogEvent('Program stack size', SysBuff, MEMUNIT);
 
-  ret := GetAllocMemSize - InitialMem; //25.07.17 nk old=AllocMemSize (deprecated)
-  SysBuff := IntToStr(ret);         // program stack used [bytes]
+  ret     := GetAllocMemSize - InitialMem; //25.07.17 nk old=AllocMemSize (deprecated)
+  SysBuff := IntToStr(ret);     // program stack used [bytes]
   LogEvent('Program stack used', SysBuff, MEMUNIT);
 
-  Free := SYSMAXSTACK - ret;
-  SysBuff := IntToStr(Free);        // program stack free [bytes]
+  Free    := SYSMAXSTACK - ret;
+  SysBuff := IntToStr(Free);    // program stack free [bytes]
   LogEvent('Program stack free', SysBuff, MEMUNIT);
 end;
 
@@ -883,9 +879,8 @@ var
 begin
   ver  := VersNum and MAXWORD;  // ignore beta version
   Vers := Format(VERSFORM, [ver]);
-
-  rel := RightStr(Vers, 1);
-  ver := Ord(rel[1]);
+  rel  := RightStr(Vers, 1);
+  ver  := Ord(rel[1]);
 
   if ver >= ASCII then begin
     ver := ver + TIGASCII;  // convert HEX->ASCII (A=k, B=l..)
@@ -902,22 +897,22 @@ end;
 procedure InitGen(Range: Byte);
 begin
   PulseMin := cOFF;
-  TimeRes := cOFF;
-  ErrCode := SYSNOERR;
+  TimeRes  := cOFF;
+  ErrCode  := SYSNOERR;
 
   case Range of
     1: begin
-         TimeRes := 1 * FREQRES;  // timer resolution [ns]
+         TimeRes  := 1 * FREQRES; // timer resolution [ns]
          PulseMin := 31;          // min number of pulses
        end;
 
     2: begin
-         TimeRes := 4 * FREQRES;
+         TimeRes  := 4 * FREQRES;
          PulseMin := 7;
        end;
 
     3: begin
-         TimeRes := 16 * FREQRES;
+         TimeRes  := 16 * FREQRES;
          PulseMin := 2;
        end;
 
@@ -958,9 +953,9 @@ begin
     Exit;
   end;
 
-  peri := NANO div Freq;  // pulse periode [ns]
+  peri  := NANO div Freq;  // pulse periode [ns]
   cycle := peri div TimeRes;
-  duty := cycle div 2;    // duty cycle 50%
+  duty  := cycle div 2;    // duty cycle 50%
   peri := cycle * TimeRes;
 
   if (duty < PulseMin) or (cycle > FREQDIV) or (peri <= 0) then begin
@@ -1007,13 +1002,13 @@ var
   i, j, ret: Long;
   addr, block: Long;
 begin
-  MemError := MEMERRNONE;
-  MemSize := cCLEAR;
+  MemError   := MEMERRNONE;
+  MemSize    := cCLEAR;
   MemSectors := cCLEAR;
-  MemBlocks := cCLEAR;
-  MemRead := MEMUNDEF;
-  MemWrite := MEMUNDEF;
-  FlashOpen := False;
+  MemBlocks  := cCLEAR;
+  MemRead    := MEMUNDEF;
+  MemWrite   := MEMUNDEF;
+  FlashOpen  := False;
 
   for i := 0 to MEMBLOCKNUM - 1 do begin  // clear block buffers
     for j := 0 to MEMBLOCKLEN - 1 do begin
@@ -1056,13 +1051,13 @@ begin
   end;
 
   MemSectors := ret;
-  MemBlocks := (MemSectors * MEMSECTSIZE) div MEMBLOCKSIZE;
+  MemBlocks  := (MemSectors * MEMSECTSIZE) div MEMBLOCKSIZE;
 
   SysBuff := IntToStr(MemSectors) + sDIM + IntToStr(MEMSECTSIZE) + MEMUNIT;
   LogEvent('InitMem', 'Flash memory sectors initialized', SysBuff);
 
   for block := 0 to MemBlocks - 1 do begin // find next free flash cell
-    addr := block * MEMBLOCKSIZE;
+    addr    := block * MEMBLOCKSIZE;
     MemRead := addr;
     ReadMemWord(lident, cOFF);  // read 1st word of block
 
@@ -1113,7 +1108,7 @@ begin
   WaitDuration(MEMLOGDEL);  // wait until message has been logged
 
   if EraseFlash(addr, size) then begin
-    MemRead := MEMSTART;
+    MemRead  := MEMSTART;
     MemWrite := addr;
     SysBuff  := IntToStr(Sector) + ' successfully cleared';
     LogEvent('ClearMem', 'Flash sector', SysBuff);
@@ -1134,7 +1129,7 @@ procedure WriteMemWord(Value: Word; GoAhead: Byte);
 var
   ret, val: Long;
 begin
-  ret := MEMERRNONE;
+  ret      := MEMERRNONE;
   MemError := MEMERRNONE;
   MemWrite := MemWrite mod MemSize;    // 03.06.07 nk add ring buffer overflow
 
@@ -1160,14 +1155,13 @@ procedure ReadMemWord(var Value: Word; GoAhead: Byte);
 var
   ret, val: Long;
 begin
-  Value := MEMEMPTYWORD;
+  Value    := MEMEMPTYWORD;
   MemError := MEMERRNONE;
-  MemRead := MemRead mod MemSize; //03.06.07 nk add ring buffer overflow
-
-  ret := PeekFlash(MemRead, val, WORDLEN);
+  MemRead  := MemRead mod MemSize; //03.06.07 nk add ring buffer overflow
+  ret      := PeekFlash(MemRead, val, WORDLEN);
 
   if (GoAhead = cON) or (ret = MEMERRNONE) then begin
-    Value := Word(val);
+    Value   := Word(val);
     MemRead := MemRead + WORDLEN;  // move read pointer to next word
   end else begin
     MemError := MEMERRREAD;
@@ -1237,7 +1231,7 @@ begin
 
     if ClearSect = cON then begin
       MemRead := MemWrite;
-      sect := MemWrite div MEMSECTSIZE + 1;       // number of next sector
+      sect    := MemWrite div MEMSECTSIZE + 1;    // number of next sector
 
       SysBuff := Format(ADDRFORM, [MemWrite]);
       LogEvent('WriteMemBlock', 'New sector ' + IntToStr(sect) + ' at address', SysBuff);
@@ -1333,17 +1327,17 @@ var
   wrec: TWaveFormatEx;
   wave: TMemoryStream;
 const
-  BPS = 8;
-  mono: Word = $0001;
-  rate: Long = 8000;  // 11025, 22050, 44100
+  BPS         = 8;
+  mono: Word  = $0001;
+  rate: Long  = 8000;             // 11025, 22050, 44100
   rid: string = 'RIFF';
-  wid: string = 'WAVE';            //nk//DO NOT WORK - use WAV fiels as RESOURCE
+  wid: string = 'WAVE';           //DO NOT WORK - use WAV fiels as RESOURCE
   fid: string = 'fmt ';
   did: string = 'data';
 begin
   if Tones = cOFF then Exit;
 
-  if {not} SoundCard then begin     // no sound card found   //nk//test
+  if not SoundCard then begin     // no sound card found
     for i := 1 to Tones do begin  // use PC speaker
       Windows.Beep(TONEFREQ, Dur);
       Sleep(Pause);
@@ -1351,19 +1345,19 @@ begin
     Exit;
   end;
 
-  PlaySound('SYSTEMEXCLAMATION', 0, SND_ASYNC);  // 27.07.17 nk add ff
-  Exit;
+  //nk// PlaySound('SYSTEMEXCLAMATION', 0, SND_ASYNC);  // 27.07.17 nk add ff
+  //nk//Exit;
 
   //ff do NOT work !!
 
   with wrec do begin
-    wFormatTag := WAVE_FORMAT_PCM;
-    nChannels := Mono;
-    nSamplesPerSec := rate;
-    wBitsPerSample := BPS;
-    nBlockAlign := (nChannels * wBitsPerSample) div BPS;
+    wFormatTag      := WAVE_FORMAT_PCM;
+    nChannels       := Mono;
+    nSamplesPerSec  := rate;
+    wBitsPerSample  := BPS;
+    nBlockAlign     := (nChannels * wBitsPerSample) div BPS;
     nAvgBytesPerSec := nSamplesPerSec * nBlockAlign;
-    cbSize := 0;
+    cbSize          := 0;
   end;
 
   wave := TMemoryStream.Create;
@@ -1420,15 +1414,15 @@ var
   i: Long;
   ret: Long;
 begin
-  Result := False;
+  Result  := False;
   ErrCode := SYSNOERR;
 
-  if Addr < 0 then ErrCode := MEMERRPARAM;
+  if Addr < 0                  then ErrCode := MEMERRPARAM;
   if Addr mod MEMSECTSIZE <> 0 then ErrCode := MEMERRPARAM;
-  if Addr > MemSize then ErrCode := MEMERRADDR;
-  if Size <= 0 then ErrCode := MEMERRPARAM;
+  if Addr > MemSize            then ErrCode := MEMERRADDR;
+  if Size <= 0                 then ErrCode := MEMERRPARAM;
   if Size mod MEMSECTSIZE <> 0 then ErrCode := MEMERRPARAM;
-  if (Addr + Size) > MemSize then ErrCode := MEMERREOF;
+  if (Addr + Size) > MemSize   then ErrCode := MEMERREOF;
 
   if ErrCode <> SYSNOERR then Exit;
 
@@ -1440,7 +1434,7 @@ begin
   end;
 
   ErrCode := SYSMEMWRITEERR;
-  value := MEMEMPTYBYTE;
+  value   := MEMEMPTYBYTE;
 
   try // to fill flash memory with 0FFh (=empty cell)
     for i := Addr to (Addr + Size - 1) do begin
@@ -1453,7 +1447,7 @@ begin
   end;
 
   ErrCode := SYSNOERR;
-  Result := True;
+  Result  := True;
 end;
 
 //------------------------------------------------------------------------------
@@ -1463,13 +1457,13 @@ function PeekFlash(Addr: Long; var Value: Long; Size: Long): Long;
 var
   ret: Long;
 begin
-  Result := MEMERRREAD;
-  Value := MEMEMPTYBYTE;
+  Result  := MEMERRREAD;
+  Value   := MEMEMPTYBYTE;
   ErrCode := SYSNOERR;
 
-  if Addr < 0 then ErrCode := MEMERRPARAM;
-  if Addr > MemSize then ErrCode := MEMERRADDR;
-  if Size <= 0 then ErrCode := MEMERRPARAM;
+  if Addr < 0                then ErrCode := MEMERRPARAM;
+  if Addr > MemSize          then ErrCode := MEMERRADDR;
+  if Size <= 0               then ErrCode := MEMERRPARAM;
   if (Addr + Size) > MemSize then ErrCode := MEMERREOF;
 
   if ErrCode <> SYSNOERR then Exit;
@@ -1491,7 +1485,7 @@ begin
   end;
 
   ErrCode := SYSNOERR;
-  Result := MEMERRNONE;
+  Result  := MEMERRNONE;
 end;
 
 //------------------------------------------------------------------------------
@@ -1504,14 +1498,14 @@ var
 begin
   Result := MEMERRNONE;
 
-  if Addr < 0 then Result := MEMERRPARAM;
-  if Addr > MemSize then Result := MEMERRADDR;
-  if Size <= 0 then Result := MEMERRPARAM;
-  if (Addr + Size) > MemSize then Result := MEMERREOF;
-  if Value < 0 then Result := MEMERRBYTES;
+  if Addr < 0                           then Result := MEMERRPARAM;
+  if Addr > MemSize                     then Result := MEMERRADDR;
+  if Size <= 0                          then Result := MEMERRPARAM;
+  if (Addr + Size) > MemSize            then Result := MEMERREOF;
+  if Value < 0                          then Result := MEMERRBYTES;
   if Value > Power(2, (Size * BYTELEN)) then Result := MEMERRSOURCE;
-  if Index <> 0 then Result := MEMERRPARAM;
-  if (Mode < 0) or (Mode > 1) then Result := MEMERRPARAM;
+  if Index <> 0                         then Result := MEMERRPARAM;
+  if (Mode < 0) or (Mode > 1)           then Result := MEMERRPARAM;
 
   if Result <> MEMERRNONE then Exit;
 
@@ -1549,7 +1543,7 @@ initialization  // Tiger hardware configuration
   DevVers[ADC] := $1013;  // A/D Converter Vers. 1.01d
   DevVers[LCD] := $1015;  // Graphic Display Vers. 1.01f
 
-  FlashFile    := ProgPath + FLASH_PATH + FLASH_FILE + FLASH_POST;
+  FlashFile    := ProgPath + FLASH_PATH + FLASH_FILE  + FLASH_POST;
   SernoFile    := ProgPath + FLASH_PATH + FLASH_SERNO + FLASH_POST;
   FlashOpen    := False;
   SysTickNull  := cCLEAR;

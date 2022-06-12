@@ -1,7 +1,7 @@
 // Global Graphic Functions
-// Date 01.02.17
+// Date 21.11.19
 // Norbert Koechli
-// Copyright ©2006-2017 seanus systems
+// Copyright ©2006-2019 seanus systems
 
 // 03.01.09 nk add support for png file format (Portable Network Graphics)
 // 21.12.09 nk opt expand image color from Integer to Int64 (32bit > MaxInt)
@@ -16,6 +16,7 @@
 // 26.05.14 nk upd to Delphi XE3 (VER240 Version 24)
 // 25.05.16 nk add GetHeatColor for improved coloring modes for heatmaps
 // 01.02.17 nk add CropBitmap and CropBitmaps to cut out desired rectangle from bitmap
+// 21.11.19 nk add GrayscaleBitmap to convert colored bitmap to grayscale
 
 unit UGraphic;
 
@@ -99,6 +100,7 @@ type
   procedure AntialiasBitmap(Bitmap: TBitmap; Percent: Integer);           //31.01.10 nk add
   procedure ThumbnailBitmap(Source, Target: TBitmap; SizeX, SizeY: Word); //12.12.10 nk add
   function InvertBitmap(Bitmap: TBitmap): TBitmap;
+  function GrayscaleBitmap(Bitmap: TBitmap): TBitmap;                       //21.11.19 nk add
   function ChangeColor(Bitmap: TBitmap; ColOld, ColNew: TColor): TBitmap; //14.04.10 nk add
   function IsPngFormat(PngFile: string): Boolean;                         //19.10.09 nk add
   function IsGifFormat(GifFile: string): Boolean;                         //20.11.10 nk add
@@ -292,8 +294,8 @@ begin
     st[3] := pRGBTriple(integer(sr[1]) + 6); //right
     st[4] := pRGBTriple(integer(sr[2]) + 3); //bottom
     tt^ := st[1]^; //1st col unchanged
-    for j := 1 to bmw do
-    begin
+
+    for j := 1 to bmw do begin
     //calcutate average weighted by -beta
       re := 0; gr := 0; bl := 0;
       for k := 0 to 4 do
@@ -520,6 +522,27 @@ begin
     end;
   end;
 
+  Result := Bitmap;
+end;
+
+function GrayscaleBitmap(Bitmap: TBitmap): TBitmap;
+var //21.11.19 nk add - convert colored Bitmap to grayscale
+  gray, r, g, b: Byte;
+  x, y: Integer;
+  cpix: Longint;
+begin
+  with Bitmap do begin
+    for x := 0 to Width - 1 do begin
+      for y := 0 to Height - 1 do begin
+        cpix := ColorToRGB(Canvas.Pixels[x, y]);
+        r    := cpix;
+        g    := cpix shr 8;
+        b    := cpix shr 16;
+        gray := Round(0.3 * r + 0.6 * g + 0.1 * b);
+        Canvas.Pixels[x, y] := RGB(gray, gray, gray);
+      end;
+    end;
+  end;
   Result := Bitmap;
 end;
 

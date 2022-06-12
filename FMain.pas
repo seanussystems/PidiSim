@@ -1,26 +1,23 @@
 // Dive Main Task
-// Date 26.07.17
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2005-2017 seanus systems
-
-// Set DebugFlag = cON in Gui to show inverse boxes for debugging
+// Copyright ©2005-2022 seanus systems
 
 unit FMain;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, XPMan,
-  Dialogs, StdCtrls, ExtCtrls, Jpeg, StrUtils, Buttons, Forms, ComCtrls, Menus,
-  ToolWin, ImgList, RzBorder, RzCmboBx, USystem, UForm, UGlobal, URegistry,
-  SYS, SER, RTC, ADC, LCD, Global, Data, Texts, Power, Flash, Clock, Display,
-  FDaq, FGui, FLog, FInfo, FProfile, FTrack, UPidi;
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Dialogs,
+  StdCtrls, ExtCtrls, Jpeg, StrUtils, Buttons, Forms, ComCtrls, Menus, ToolWin,
+  ImgList, RzBorder, RzCmboBx, USystem, UForm, UGlobal, URegistry, SYS, SER,
+  RTC, ADC, LCD, Global, Data, Texts, Power, Flash, Clock, Display, FDaq, FGui,
+  FLog, FInfo, FProfile, FTrack, UPidi;
 
 type
   TMain = class(TForm)
     MainTask: TTimer;
     MainBack: TImage;
-    MainManifest: TXPManifest;
     MainMenu: TPopupMenu;
     mnuBack: TMenuItem;
     mnuSave: TMenuItem;
@@ -53,7 +50,7 @@ implementation
 procedure TMain.FormCreate(Sender: TObject);
 begin //25.07.17 nk opt
   FormatSettings.DecimalSeparator := cDOT; //25.07.17 nk opt XE3
-  RegPath := REG_SOFTWARE + CompanyName + cBACK + ProductName + cBACK;
+  RegPath := REG_SOFTWARE + ProductName + cBACK;
 
   InitForm; //DELPHI only - get form texts
 
@@ -65,7 +62,7 @@ begin //25.07.17 nk opt
     Top            := 20;
     Width          := FORMWIDTH;  //old=800
     Height         := FORMHEIGHT; //old=600
-    Caption        := ProductHeader;
+    Caption        := ProductAgent;
     MainBack.Align := alClient;
     Show;
   end;

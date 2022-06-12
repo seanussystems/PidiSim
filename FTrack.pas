@@ -1,10 +1,7 @@
 // Dive Track Chart
-// Date 26.07.17
+// Date 12.06.22
 // Norbert Koechli
-// Copyright ©2005-2017 seanus systems
-
-// 03.06.07 nk upd to SDL TPolChart (rad = Distance, phi = Bearing)
-// 20.10.07 nk upd to SDL Component Suite 9.0 for Delphi 2007
+// Copyright ©2005-2022 seanus systems
 
 unit FTrack;
 
@@ -12,16 +9,16 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Forms, Math, Dialogs, ExtCtrls, StdCtrls, ComCtrls, SDL_Sdlbase,
-  SDL_Polchart, USystem, UGraphic, URegistry, SYS, Global, Data, Texts,
-  Clock, FLog, UPidi;
+  Forms, Math, Dialogs, ExtCtrls, StdCtrls, ComCtrls, {SDL_Sdlbase,
+  SDL_Polchart,} USystem, UGraphic, URegistry, SYS, Global, Data, Texts,
+  Clock, FLog, UPidi, PolarChart;
 
 type
   TTrack = class(TForm)
     TrackPanel: TPanel;
     TrackLoop: TTimer;
     TrackStatus: TStatusBar;
-    TrackChart: TPolChart; //20.10.07 nk upd to vers 9.0
+    TrackChart: TPolarChart; // 12.06.22 nk upd to Dive Charts Vers 2.0
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormResize(Sender: TObject);

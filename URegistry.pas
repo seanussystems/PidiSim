@@ -1,7 +1,7 @@
 // Registry Handling and Program Registration
-// Date 08.03.17
+// Date 20.12.20
 // Norbert Koechli
-// Copyright ©2006-2017 seanus systems
+// Copyright ©2006-2020 seanus systems
 
 /// NOTE: A standard user on XP/Vista/W7 does NOT have read/write permissions
 ///       to HKLM, but on it's own HKCU (RegProfil=rpUser)
@@ -22,6 +22,7 @@
 // 11.10.15 nk opt for XE7 / V5 / Visual styles
 // 25.02.16 nk add RegAddress and RegLocation for new client-based installation
 // 08.03.17 nk add REG_KEY_PROGRAM = 'ProgramFolder' and REG_KEY_REGPATH = 'RegistryPath'
+// 18.05.19 nk add REG_KEY_UPDATE and RegUpdate to check for current update build in registry
 
 unit URegistry;
 
@@ -77,6 +78,7 @@ const
   REG_DEFAULT       = 'seanus systems\Settings\';
   REG_FULLVERS      = 'Full Version';
   REG_TRIALVERS     = 'Trial Version';
+  REG_FREEDEMO      = 'Free Demo Version'; //51//08.07.18 nk add
   REG_TESTVERS      = 'Test Version';
   REG_CLIENTVERS    = 'Client Version';
   REG_TRAININGVERS  = 'Training Version';
@@ -195,6 +197,7 @@ var
   RegWidth: Integer;
   RegHeight: Integer;
   RegVers: string;
+  RegUpdate: string; //51//18.05.19 nk add
   RegPath: string;
   RegMain: string;
   RegDefPath: string;
@@ -294,7 +297,6 @@ var //get REG_MULTI_SZ strings from registry and return delimiter separated valu
   reg: TRegistry;     //RegPart 1..n, 0=all - delimiter = REG_MULTIDEL
 begin
   Result := cEMPTY;
-
   reg := TRegistry.Create(KEY_READ);
 
   with reg do begin
@@ -487,9 +489,7 @@ procedure SetFormParameter(Sender: TObject);
 begin //save form position and dimension to registry
   with Sender as TForm do begin
     if RegPath = cEMPTY then RegPath := RegDefPath;
-
     if WindowState = wsMinimized then Exit;                                     //ignore minimized windows
-
     if WindowState = wsMaximized then begin
       SetRegString(RegPath + Name, REG_KEY_STATE,  ISON);
     end else begin
@@ -764,6 +764,7 @@ initialization
   RegOperator    := cEMPTY;
   RegCompany     := cEMPTY;
   RegDepartment  := cEMPTY;
+  RegUpdate      := cEMPTY;  //51//18.05.19 nk add
   RegEnable      := cEMPTY;
   RegLicenseKey  := cEMPTY;
   RegControlKey  := cEMPTY;

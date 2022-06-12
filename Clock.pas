@@ -1,7 +1,7 @@
 // Time, Date and Calendar Functions
-// Date 17.02.07
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2007 seanus systems
+// Copyright ©2007-2022 seanus systems
 
 unit Clock;
 

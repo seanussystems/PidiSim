@@ -3,8 +3,8 @@ object Plan: TPlan
   Top = 223
   Hint = 'Sym'
   Caption = ' Dive Simulation'
-  ClientHeight = 278
-  ClientWidth = 555
+  ClientHeight = 343
+  ClientWidth = 614
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,8 +21,8 @@ object Plan: TPlan
   TextHeight = 13
   object PlanStatus: TStatusBar
     Left = 0
-    Top = 259
-    Width = 555
+    Top = 324
+    Width = 614
     Height = 19
     Panels = <
       item
@@ -39,24 +39,23 @@ object Plan: TPlan
         Text = ' Status'
         Width = 50
       end>
+    ExplicitTop = 259
+    ExplicitWidth = 555
   end
   object PlanPanel: TPanel
     Left = 8
     Top = 8
     Width = 489
-    Height = 225
+    Height = 201
     Ctl3D = True
     UseDockManager = False
     ParentCtl3D = False
     TabOrder = 1
-    DesignSize = (
-      489
-      225)
-    object PlanChart: TRChart
-      Left = 8
-      Top = 8
-      Width = 417
-      Height = 177
+    object PlanChart: TDepthChart
+      Left = 26
+      Top = 0
+      Width = 350
+      Height = 172
       AvoidDuplicateMarks = False
       AllocSize = 1000
       AutoRedraw = True
@@ -76,7 +75,7 @@ object Plan: TPlan
       BackGroundImg.AreaTop = 1.000000000000000000
       BackGroundImg.AreaBottom = -1.000000000000000000
       ClassDefault = 0
-      GridStyle = gsDotLines
+      GridStyle = gsNone
       Isometric = False
       JointLayers.L01xControlledBy = 1
       JointLayers.L01yControlledBy = 1
@@ -116,28 +115,31 @@ object Plan: TPlan
       CaptionAlignment = taRightJustify
       CaptionAnchorHoriz = cahChartRight
       CaptionAnchorVert = cavChartTop
-      CrossHair1.Color = clBlack
+      CaptionTrim = 100
+      MouseTraceColor = clWhite
+      MouseTraceInvert = True
+      CrossHair1.Color = clRed
       CrossHair1.Layer = 1
       CrossHair1.Mode = chOff
-      CrossHair1.LineType = psSolid
+      CrossHair1.LineType = psDashDotDot
       CrossHair1.LineWid = 1
-      CrossHair2.Color = clBlack
+      CrossHair2.Color = clRed
       CrossHair2.Layer = 2
       CrossHair2.Mode = chOff
-      CrossHair2.LineType = psSolid
+      CrossHair2.LineType = psDashDotDot
       CrossHair2.LineWid = 1
-      CrossHair3.Color = clBlack
+      CrossHair3.Color = clRed
       CrossHair3.Layer = 3
       CrossHair3.Mode = chOff
-      CrossHair3.LineType = psSolid
+      CrossHair3.LineType = psDashDotDot
       CrossHair3.LineWid = 1
-      CrossHair4.Color = clBlack
+      CrossHair4.Color = clRed
       CrossHair4.Layer = 4
       CrossHair4.Mode = chOff
-      CrossHair4.LineType = psSolid
+      CrossHair4.LineType = psDashDotDot
       CrossHair4.LineWid = 1
       MouseAction = maNone
-      MouseCursorFixed = False
+      MouseCursorFixed = True
       PanGridDx = 1.000000000000000000
       PanGridDy = 1.000000000000000000
       Scale1X.CaptionPosX = 0
@@ -162,6 +164,7 @@ object Plan: TPlan
       Scale1X.LabelType = ftNum
       Scale1X.MinTicks = 3
       Scale1X.MinRange = 0.000000000100000000
+      Scale1X.MouseAction = maNone
       Scale1X.RangeHigh = 1.000000000000000000
       Scale1X.ShortTicks = True
       Scale1X.ScalePos = 0
@@ -189,6 +192,7 @@ object Plan: TPlan
       Scale1Y.LabelType = ftNum
       Scale1Y.MinTicks = 3
       Scale1Y.MinRange = 0.000000000100000000
+      Scale1Y.MouseAction = maNone
       Scale1Y.RangeHigh = 1.000000000000000000
       Scale1Y.ShortTicks = True
       Scale1Y.ScalePos = 0
@@ -216,6 +220,7 @@ object Plan: TPlan
       Scale2X.LabelType = ftNum
       Scale2X.MinTicks = 3
       Scale2X.MinRange = 0.000000000100000000
+      Scale2X.MouseAction = maNone
       Scale2X.RangeHigh = 1.000000000000000000
       Scale2X.ShortTicks = True
       Scale2X.ScalePos = 0
@@ -243,6 +248,7 @@ object Plan: TPlan
       Scale2Y.LabelType = ftNum
       Scale2Y.MinTicks = 3
       Scale2Y.MinRange = 0.000000000100000000
+      Scale2Y.MouseAction = maNone
       Scale2Y.RangeHigh = 1.000000000000000000
       Scale2Y.ShortTicks = True
       Scale2Y.ScalePos = 0
@@ -270,6 +276,7 @@ object Plan: TPlan
       Scale3X.LabelType = ftNum
       Scale3X.MinTicks = 3
       Scale3X.MinRange = 0.000000000100000000
+      Scale3X.MouseAction = maNone
       Scale3X.RangeHigh = 1.000000000000000000
       Scale3X.ShortTicks = True
       Scale3X.ScalePos = 0
@@ -297,6 +304,7 @@ object Plan: TPlan
       Scale3Y.LabelType = ftNum
       Scale3Y.MinTicks = 3
       Scale3Y.MinRange = 0.000000000100000000
+      Scale3Y.MouseAction = maNone
       Scale3Y.RangeHigh = 1.000000000000000000
       Scale3Y.ShortTicks = True
       Scale3Y.ScalePos = 0
@@ -324,6 +332,7 @@ object Plan: TPlan
       Scale4X.LabelType = ftNum
       Scale4X.MinTicks = 3
       Scale4X.MinRange = 0.000000000100000000
+      Scale4X.MouseAction = maNone
       Scale4X.RangeHigh = 1.000000000000000000
       Scale4X.ShortTicks = True
       Scale4X.ScalePos = 0
@@ -351,6 +360,7 @@ object Plan: TPlan
       Scale4Y.LabelType = ftNum
       Scale4Y.MinTicks = 3
       Scale4Y.MinRange = 0.000000000100000000
+      Scale4Y.MouseAction = maNone
       Scale4Y.RangeHigh = 1.000000000000000000
       Scale4Y.ShortTicks = True
       Scale4Y.ScalePos = 0
@@ -360,85 +370,45 @@ object Plan: TPlan
       ShadowColor = clGrayText
       ShadowBakColor = clBtnFace
       StyleElements = []
+      TextFont.Charset = DEFAULT_CHARSET
+      TextFont.Color = clWindowText
+      TextFont.Height = -11
+      TextFont.Name = 'Tahoma'
+      TextFont.Style = []
       TextFontStyle = []
       TextBkStyle = tbClear
-      TextBkColor = clWhite
       TextAlignment = taCenter
       OnMouseDown = PlanChartMouseDown
       OnMouseMoveInChart = PlanChartMouseMoveInChart
     end
-    object btClear: TRzButton
-      Left = 240
-      Top = 184
-      Width = 64
-      Height = 22
-      Hint = ' Clear dive profile '
-      ShowDownPattern = False
-      ShowFocusRect = False
-      Anchors = [akLeft, akBottom]
-      Caption = 'Clear'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -12
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      HotTrack = True
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 0
-      OnClick = btClearClick
-    end
-    object btStart: TRzButton
-      Left = 312
-      Top = 184
-      Width = 64
-      Height = 22
-      Hint = ' Start dive simulation '
-      ShowDownPattern = False
-      ShowFocusRect = False
-      Anchors = [akLeft, akBottom]
-      Caption = 'Start'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -12
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      HotTrack = True
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 1
-      OnClick = btStartClick
-    end
-    object cbGasMix: TRzComboBox
-      Left = 56
-      Top = 185
-      Width = 97
-      Height = 21
-      Hint = ' Select gas mix '
-      AllowEdit = False
-      AutoComplete = False
-      AutoCloseUp = True
-      BeepOnInvalidKey = False
-      Ctl3D = False
-      FrameVisible = True
-      ParentCtl3D = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 2
-      OnDrawItem = cbGasMixDrawItem
-      OnSelect = cbGasMixSelect
-    end
+  end
+  object PlanControls: TPanel
+    Left = 0
+    Top = 293
+    Width = 614
+    Height = 31
+    Align = alBottom
+    BevelOuter = bvNone
+    Ctl3D = True
+    UseDockManager = False
+    ParentBackground = False
+    ParentCtl3D = False
+    TabOrder = 2
+    ExplicitTop = 432
+    ExplicitWidth = 704
+    DesignSize = (
+      614
+      31)
     object btDepth: TRzBitBtn
       Left = 16
-      Top = 184
+      Top = 3
       Width = 22
       Height = 22
       Hint = ' Expand depth range '
       DropDownOnEnter = False
       ShowDownPattern = False
       ShowFocusRect = False
+      Anchors = [akLeft, akBottom]
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -449,7 +419,7 @@ object Plan: TPlan
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 3
+      TabOrder = 0
       TabStop = False
       ThemeAware = False
       OnClick = btDepthClick
@@ -458,16 +428,85 @@ object Plan: TPlan
       Layout = blGlyphTop
       Margin = 0
       Spacing = 0
+      ExplicitTop = 29
+    end
+    object cbGasMix: TRzComboBox
+      Left = 56
+      Top = 4
+      Width = 97
+      Height = 21
+      Hint = ' Select gas mix '
+      AllowEdit = False
+      Anchors = [akLeft, akBottom]
+      AutoComplete = False
+      AutoCloseUp = True
+      BeepOnInvalidKey = False
+      Ctl3D = False
+      FrameVisible = True
+      ParentCtl3D = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      OnDrawItem = cbGasMixDrawItem
+      OnSelect = cbGasMixSelect
+      ExplicitTop = 30
+    end
+    object btClear: TRzButton
+      Left = 437
+      Top = 3
+      Width = 64
+      Height = 22
+      Hint = ' Clear dive profile '
+      ShowDownPattern = False
+      ShowFocusRect = False
+      Anchors = [akRight, akBottom]
+      Caption = 'Clear'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      HotTrack = True
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      OnClick = btClearClick
+      ExplicitLeft = 527
+    end
+    object btStart: TRzButton
+      Left = 509
+      Top = 3
+      Width = 64
+      Height = 22
+      Hint = ' Start dive simulation '
+      ShowDownPattern = False
+      ShowFocusRect = False
+      Anchors = [akRight, akBottom]
+      Caption = 'Start'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      HotTrack = True
+      ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+      OnClick = btStartClick
+      ExplicitLeft = 599
     end
     object btTime: TRzBitBtn
-      Left = 384
-      Top = 184
+      Left = 581
+      Top = 3
       Width = 22
       Height = 22
       Hint = ' Expand time range '
       DropDownOnEnter = False
       ShowDownPattern = False
       ShowFocusRect = False
+      Anchors = [akRight, akBottom]
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -486,19 +525,20 @@ object Plan: TPlan
       Images = PlanIcons
       Margin = 0
       Spacing = 0
+      ExplicitLeft = 671
     end
   end
   object PlanLoop: TTimer
     Enabled = False
     Interval = 500
-    Left = 448
+    Left = 528
     Top = 32
   end
   object PlanIcons: TImageList
-    Left = 448
-    Top = 72
+    Left = 528
+    Top = 80
     Bitmap = {
-      494C0101020004000C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010102000500040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

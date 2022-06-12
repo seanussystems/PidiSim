@@ -1,7 +1,7 @@
 // Sonar Module Functions
-// Date 25.07.17
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2005-2017 seanus systems
+// Copyright ©2005-2022 seanus systems
 
 // DELPHI simulate the Sonar Module with
 // the TrackChart.CrossHair1 from Form 'Track'

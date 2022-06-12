@@ -1,10 +1,7 @@
 // Dive Planner
-// Date 26.07.17
+// Date 12.06.22
 // Norbert Koechli
-// Copyright ©2005-2017 seanus systems
-
-// 05.05.07 nk upd to SDL TRChart (x = Time, y = Depth)
-// 20.10.07 nk upd to SDL Component Suite 9.0 for Delphi 2007
+// Copyright ©2005-2022 seanus systems
 
 unit FPlan;
 
@@ -12,21 +9,22 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Forms, StdCtrls, ComCtrls, CommCtrl, ExtCtrls, ImgList, RzButton,
-  RzCmboBx, SDL_Sdlbase, SDL_Rchart, USystem, URegistry, SYS, Global,
+  Forms, StdCtrls, ComCtrls, CommCtrl, ExtCtrls, ImgList, System.ImageList,
+  RzButton, RzCmboBx, gl_base, DepthChart, USystem, URegistry, SYS, Global,
   Data, Texts, Sensor, UPidi;
 
 type
   TPlan = class(TForm)
     PlanPanel: TPanel;
+    PlanControls: TPanel;
     PlanLoop: TTimer;
     PlanStatus: TStatusBar;
-    PlanChart: TRChart; //20.10.07 nk upd to vers 9.0
+    PlanChart: TDepthChart; // 12.06.22 nk upd to Dive Charts Vers 2.0
     PlanIcons: TImageList;
+    btDepth: TRzBitBtn;
+    cbGasMix: TRzComboBox;
     btClear: TRzButton;
     btStart: TRzButton;
-    cbGasMix: TRzComboBox;
-    btDepth: TRzBitBtn;
     btTime: TRzBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -123,6 +121,7 @@ begin
     BevelInner := bvNone;
     BevelOuter := bvNone;
     Ctl3D := False;
+    Cursor := crCross;
     Caption := sEMPTY;
     DoubleBuffered := True;
     UseDockManager := False;
@@ -133,11 +132,10 @@ begin
     LRim := 40;
     RRim := 20;
     TRim := 20;
-    BRim := 70;
+    BRim := 40;
     Align := alClient;
     AutoRedraw := True;
     Isometric := False;
-    Cursor := crCross;
     Caption := sEMPTY;
     ChartColor := COLORWATER;
     DataColor := COLORTRACK;
@@ -175,27 +173,27 @@ begin
   end;
 
   with btDepth do begin
-    Left      := PlanChart.LRim - Width;
-    Top       := PlanChart.Height - PlanChart.BRim div 2 + 4;
-    Anchors   := [akLeft,akBottom];
+    //Left      := PlanChart.LRim - Width;
+    //Top       := PlanChart.Height - PlanChart.BRim div 2 + 4;
+    //Anchors   := [akLeft,akBottom];
     Alignment := taCenter;
     HotTrack  := True;
     ShowHint  := True;
   end;
 
   with btTime do begin
-    Left      := PlanChart.Width - PlanChart.RRim - Width;
-    Top       := btDepth.Top;
-    Anchors   := [akRight, akBottom];
+    //Left      := PlanChart.Width - PlanChart.RRim - Width;
+    //Top       := btDepth.Top;
+    //Anchors   := [akRight, akBottom];
     Alignment := taCenter;
     HotTrack  := True;
     ShowHint  := True;
   end;
 
   with cbGasMix do begin
-    Left    := btDepth.Left + 32;
-    Top     := btDepth.Top;
-    Anchors := [akLeft,akBottom];
+    //Left    := btDepth.Left + 32;
+    //Top     := btDepth.Top;
+    //Anchors := [akLeft,akBottom];
     Clear;
     for i := Low(GasMix) to High(GasMix) do
       Items.Add(GasMix[i]);
@@ -212,18 +210,18 @@ begin
   end;
 
   with btStart do begin
-    Left      := btTime.Left - 72;
-    Top       := btDepth.Top;
-    Anchors   := [akRight, akBottom];
+    //Left      := btTime.Left - 72;
+    //Top       := btDepth.Top;
+    //Anchors   := [akRight, akBottom];
     Alignment := taCenter;
     HotTrack  := True;
     ShowHint  := True;
   end;
 
   with btClear do begin
-    Left      := btStart.Left - 72;
-    Top       := btDepth.Top;
-    Anchors   := [akRight, akBottom];
+    //Left      := btStart.Left - 72;
+    //Top       := btDepth.Top;
+    //Anchors   := [akRight, akBottom];
     Alignment := taCenter;
     HotTrack  := True;
     ShowHint  := True;

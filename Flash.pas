@@ -1,7 +1,7 @@
 // Flash Logging of Dive Parameter and Settings
-// Date 26.07.17
+// Date 28.05.22
 // Norbert Koechli
-// Copyright ©2005-2017 seanus systems
+// Copyright ©2005-2022 seanus systems
 
 // Delphi simulates Tiger flash memory as binary hex file
 
@@ -16,9 +16,8 @@ unit Flash;
 interface
 
 uses
-  Windows, SysUtils, Classes, TypInfo, Variants, DateUtils, UGlobal, USystem,
-  UFile, URegistry, SYS, Global, Data, Clock, Texts, FProfile, FTrack, FPlan,
-  FLog, UPidi;
+  Windows, SysUtils, Classes, TypInfo, Variants, DateUtils, SYS, Global, Data,
+  Clock, Texts, FProfile, FTrack, FPlan, FLog, UPidi;
 
   procedure ClearDiveCatalog;
   procedure LoadDiveCatalog(var CatDives, LogDives: Word);
@@ -75,7 +74,7 @@ end;
 
 //------------------------------------------------------------------------------
 // LOADDIVECATALOG - Initialize a new dive catalog and load LOGSTART info of the
-//   last MAXCATDIVE dives saved in the flash memory (DELPHI=file) and return
+//   last MAXCATDIVE dives saved in the flash memory (DELPHI = file) and return
 //   the number of dives in the catalog (scan backwards for youngest dive first)
 //   Limits: Only the youngest MAXCATDIVE dives are listed in the catalog
 //------------------------------------------------------------------ 17.02.07 --
@@ -123,7 +122,7 @@ begin
       end else begin
         CatDives := CatDives + 1;     // 1-MAXCATDIVE (DiveCatalog[0, x] for header info)
 
-        //nk// test only
+        //test only
         //SysBuff := Format(ADDRFORM, [addr]);
         //dtime := MemBlock[LOGBLOCKPAR, 4] * HIGHWORD + MemBlock[LOGBLOCKPAR, 5];
         //SysBuff := SysBuff + ' - ' + IntToStr(MemBlock[LOGBLOCKPAR, 3]);
@@ -155,7 +154,7 @@ begin
 LISTFULL: // dive catalog header info
   MemRead := MEMSTART;
 
-  //nk// fill data with max / avg data
+  //nk// fill header info with max / avg data
   DiveCatalog[0, 0] := 0;   //
   DiveCatalog[0, 1] := 0;   //
   DiveCatalog[0, 2] := blocks;   // total used dive blocks
@@ -216,7 +215,7 @@ begin
 
   eblock := eblock + sblock;
 
-  //nk// test only
+  {//nk// test only
   DiveData[0]  := 45240;  // 220     // metrical units
   DiveData[1]  := 7404;   // 221
   DiveData[2]  := 754;    // 222
@@ -259,12 +258,11 @@ begin
   DiveData[36] := 37020;  // 251
   DiveData[37] := 267;    // 253
   DiveData[38] := 123;    // 254
-  DiveData[39] := 70;     // 255
+  DiveData[39] := 70;     // 255   }
 
 
- {       //nk//needed???
- for block := sblock to eblock do begin
-    addr := block * MEMBLOCKSIZE; // flash memory address
+  for block := sblock to eblock do begin
+    addr    := block * MEMBLOCKSIZE; // flash memory address
     MemRead := addr;
     ReadMemBlock(LOGBLOCKPAR);    // read dive data block
 
@@ -283,7 +281,7 @@ begin
 
       ldat := ldat + 1;
     end;
-  end; }
+  end;
 
   MemRead := MEMSTART;
 
@@ -324,9 +322,9 @@ var
 begin
   GetCatalogDive(Dive); // get catalog dive number
 
-  eblock := DiveCatalog[Dive, 2]; // number of dive log blocks
-  sblock := DiveCatalog[Dive, 7]; // flash start block of dive
-  astep := eblock div CHARTLOGPOINT + 1; // DELPHI step width for profile chart
+  eblock := DiveCatalog[Dive, 2];         // number of dive log blocks
+  sblock := DiveCatalog[Dive, 7];         // flash start block of dive
+  astep  := eblock div CHARTLOGPOINT + 1; // DELPHI step width for profile chart
 
   if (Dive = 0) or (eblock = 0) then begin
     LogBuff := IntToStr(Dive);
@@ -407,8 +405,8 @@ begin
   DiveLogNum := DiveLogNum + 1; // count dive number up (1..9999)
   LogWrite   := MemWrite;       // store start address of dive log
   LogStep    := cCLEAR;
-  LogBlock  := cCLEAR;          // start dive data block
-  LogIdent  := LOGSTART + DiveDayNum * HIGHBYTE;
+  LogBlock   := cCLEAR;         // start dive data block
+  LogIdent   := LOGSTART + DiveDayNum * HIGHBYTE;
 
   ClearMemBlock(LOGBLOCKPAR);
 
@@ -432,7 +430,7 @@ begin
   WriteMemBlock(LOGBLOCKPAR, cON);
 
   LogBlock := LogBlock + 1;    // inital dive data block
-  LogIdent := LOGINIT + DiveDayNum * HIGHBYTE;
+  LogIdent := LOGINIT  + DiveDayNum * HIGHBYTE;
 
   ClearMemBlock(LOGBLOCKPAR);
 
@@ -601,11 +599,12 @@ begin
     MemBlock[LOGBLOCKPAR, 15] := StatusWord;        // system status word [bit]
     WriteMemBlock(LOGBLOCKPAR, cON);
   end;
-  {//nk//test
-  if SwimSpeed > 0 then begin //DELPHI: draw dive track
+
+  //DELPHI: draw dive track
+  if SwimSpeed > 0 then begin
     Track.AddDivePos(AUTOINC, HomeDist, Bearing);
     Track.DrawDivePos(HomeDist, Bearing, True);
-  end;  }
+  end;
 
   //DELPHI: draw dive profile
   Profile.AddDivePoint(AUTOINC, MemBlock[LOGBLOCKPAR, 1], MemBlock[LOGBLOCKPAR, 2], MemBlock[LOGBLOCKPAR, 3]);
@@ -633,7 +632,7 @@ begin
   MemBlock[LOGBLOCKPAR, 2] := MaxDepth; // max depth [cm]
   MemBlock[LOGBLOCKPAR, 3] := LogBlock; // total number of dive blocks
 
-  WriteMemBlock(LOGBLOCKPAR, cOFF); // 01.06.07 nk opt - do not clear sector
+  WriteMemBlock(LOGBLOCKPAR, cOFF);     // 01.06.07 nk opt - do not clear sector
 
   LogIdent := LOGEND + DiveDayNum * HIGHBYTE;
   MemWrite := endwrite;  // re-store end address of dive log
@@ -796,7 +795,7 @@ begin
     ltype := lident mod HIGHBYTE;      // get lower byte of word (LogType)
 
     if ltype = LOGSET then begin       // setting parameter found
-      snum   := lident div HIGHBYTE;   // get higher byte of word (SetNum)
+      snum    := lident div HIGHBYTE;   // get higher byte of word (SetNum)
       MemRead := addr;                 // reset read address pointer
       ReadMemBlock(LOGBLOCKSET);       // read setting parameter block
 

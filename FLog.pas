@@ -1,7 +1,7 @@
 // Log Terminal Task
-// Date 13.05.07
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2005-2007 seanus systems
+// Copyright ©2005-2022 seanus systems
 
 unit FLog;
 

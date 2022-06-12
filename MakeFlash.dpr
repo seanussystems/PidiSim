@@ -11,4 +11,5 @@ begin
   Application.Title := 'MakeFlash';
   Application.CreateForm(TFlash, Flash);
   Application.Run;
+
 end.

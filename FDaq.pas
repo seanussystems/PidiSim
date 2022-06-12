@@ -1,9 +1,9 @@
 // Data Acquisition Task
-// Date 26.07.17
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2005-2017 seanus systems
+// Copyright ©2005-2022 seanus systems
 
-//nk// use Function for Unit conversion
+//TODO//use Function for Unit conversion
 
 unit FDaq;
 
@@ -13,8 +13,9 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Mask, Dialogs, ExtCtrls, StdCtrls, ComCtrls, Buttons, ImgList, StrUtils, Math,
   RzCommon, RzTabs, RzRadChk, RzEdit, RzSpnEdt, RzTrkBar, RzButton, RzBorder,
-  RzDBTrak, RzCmboBx, USystem, URegistry, SYS, ADC, SER, Global, Data, Flash,
-  Deco, Texts, Clock, Power, Sensor, Compass, Sonar, Tank, FLog, FInfo, UPidi;
+  {RzDBTrak,} RzCmboBx, USystem, URegistry, SYS, ADC, SER, Global, Data, Flash,
+  Deco, Texts, Clock, Power, Sensor, Compass, Sonar, Tank, FLog, FInfo, UPidi,
+  System.ImageList;
 
 type
   TDaq = class(TForm)

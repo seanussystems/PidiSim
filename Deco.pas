@@ -1,7 +1,7 @@
 // Tissue Saturation and Decompression Calculations
-// Date 17.02.07
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2005-2007 seanus systems
+// Copyright ©2005-2022 seanus systems
 
 unit Deco;
 
@@ -88,8 +88,8 @@ begin
   for k := 1 to MAXCOMP - 1 do begin  // for each compartment
 
     ht := Kt[k] * 6;               // compartment half time [s]
-    a := Ka[k] / 1000.0 * sr;      // buehlmann parameter a [mbar] (scored)
-    b := Kb[k] / 10000.0;          // buehlmann parameter b
+    a  := Ka[k] / 1000.0 * sr;     // buehlmann parameter a [mbar] (scored)
+    b  := Kb[k] / 10000.0;         // buehlmann parameter b
 
     //**** calculate tissue saturation *****
 
@@ -99,24 +99,24 @@ begin
       th := ht;                    // -->  standard for saturation
     end;
 
-    ex := 1.0 - Exp(-t / th * LN2); // exponential time function of tissue in/out-gassing
-    dP := ex * (Pg - Pt[k]);       // inert gas pressure (+/-) take [mbar] in tissue while t [s]
-    Pt[k] := Pt[k] + dP;           // new cumulated tissue pressure [mbar]
+    ex    := 1.0 - Exp(-t / th * LN2); // exponential time function of tissue in/out-gassing
+    dP    := ex * (Pg - Pt[k]);        // inert gas pressure (+/-) take [mbar] in tissue while t [s]
+    Pt[k] := Pt[k] + dP;               // new cumulated tissue pressure [mbar]
 
     Po := (Pb / b) + a;            // tolerated ambient pressure at surface [mbar]
     Pc := (Pa / b) + a;            // tolerated ambient pressure at depth [mbar]
 
     if Pg > 0 then begin
-      nk := PROCENT * Pt[k] / Pg;  // DELPHI: Real -> Long
-      rt := Trunc(nk);             // tissue pressure rel breathing inert gas pressure [%]
+      nk    := PROCENT * Pt[k] / Pg;  // DELPHI: Real -> Long
+      rt    := Trunc(nk);             // tissue pressure rel breathing inert gas pressure [%]
       Rg[k] := Limit(rt, 0, SATMAXLOAD);
     end else begin
       Rg[k] := SATMAXLOAD;
     end;
 
     if Pc > 0 then begin
-      nk := PROCENT * Pt[k] / Pc;  // DELPHI: Real -> Long
-      rt := Trunc(nk);             // tissue pressure rel tolerated ambient pressure [%]
+      nk    := PROCENT * Pt[k] / Pc;  // DELPHI: Real -> Long
+      rt    := Trunc(nk);             // tissue pressure rel tolerated ambient pressure [%]
       Rc[k] := Limit(rt, 0, SATMAXLOAD);
     end else begin
       Rc[k] := 0;
@@ -172,12 +172,12 @@ begin
 
 // output
 //------------------------------------------------------------------------------
-  NullTime := Limit(nt, 0, TIMERANGE);     // remaining no deco time [s] (0..9:59)
-  DesatTime := Limit(dt, 0, TIMEDISP);     // desaturation time [s] (0..99:59)
-  FlightTime := Limit(ft, 0, TIMEDISP);    // waiting time to fly [s] (0..99:59)
-  InertPress := Limit(Trunc(Pg), 0, DEPTHDISP);  // inert gas pressure [mbar] (0..19900)
-  DecoCeil := Limit(dc, 0, DEPTHDISP);     // deepest ceiling [mbar=cm] (0..19900)
-  LeadTissue := Limit(lt, 0, SATMAXLOAD);  // leading tissue pressure [%] (0..120)
+  NullTime   := Limit(nt, 0, TIMERANGE);        // remaining no deco time [s] (0..9:59)
+  DesatTime  := Limit(dt, 0, TIMEDISP);         // desaturation time [s] (0..99:59)
+  FlightTime := Limit(ft, 0, TIMEDISP);         // waiting time to fly [s] (0..99:59)
+  InertPress := Limit(Trunc(Pg), 0, DEPTHDISP); // inert gas pressure [mbar] (0..19900)
+  DecoCeil   := Limit(dc, 0, DEPTHDISP);        // deepest ceiling [mbar=cm] (0..19900)
+  LeadTissue := Limit(lt, 0, SATMAXLOAD);       // leading tissue pressure [%] (0..120)
 end;
 
 //------------------------------------------------------------------------------
@@ -212,8 +212,8 @@ begin
   for k := 1 to MAXCOMP - 1 do begin
 
     ht := Kt[k] * 6;               // compartment half time [s]
-    a := Ka[k] / 1000.0 * sr;      // buehlmann parameter a [mbar] (scored)
-    b := Kb[k] / 10000.0;          // buehlmann parameter b
+    a  := Ka[k] / 1000.0 * sr;     // buehlmann parameter a [mbar] (scored)
+    b  := Kb[k] / 10000.0;         // buehlmann parameter b
 
     Dt := Pt[k];                   // actual tissue inert gas pressure [mbar]
     Ph := (Pt[k] - a) * b - Pb;    // highest allowed deco ceiling [mbar=cm] rel. surface (Pb)
@@ -262,7 +262,7 @@ begin
 // output
 //------------------------------------------------------------------------------
   DecoDepth := Limit(ds, 0, DEPTHDISP); // deepest deco stop depth [cm] (0..19900)
-  DecoTime := Limit(st, 0, TIMERANGE);  // deepest deco stop time [s] (0..9:59)
+  DecoTime  := Limit(st, 0, TIMERANGE); // deepest deco stop time [s] (0..9:59)
 end;                                    // 05.06.07 nk old=TIMESHORT
 
 //------------------------------------------------------------------------------
@@ -277,7 +277,7 @@ begin
   tg := 0;                         // initial total deco gas [mbar]
 
   SimDecoDepth := 0;
-  SimDecoGas := 0;
+  SimDecoGas   := 0;
 
   for k := 0 to MAXCOMP - 1 do begin  // initialize simulation tissues with
     Px[k] := Pt[k];                   // actual inert gas saturation [mbar]
@@ -286,18 +286,18 @@ begin
 // globals
 //------------------------------------------------------------------------------
   k := 0;
-  SimDecoTime := DecoTime;
-  SimDiveTime := DecoTime;         // 1st deco stop time [s] and deepest
+  SimDecoTime  := DecoTime;
+  SimDiveTime  := DecoTime;        // 1st deco stop time [s] and deepest
   SimDiveDepth := DecoDepth;       // deco depth [cm] from CalcDecoStop
 
   while SimDiveTime > 0 do begin   // calculate true deco time
-    k := k + 1;
+    k  := k + 1;
     tt := tt + SimDecoTime;        // cummulate deco time [s] and
     tg := tg + SimDecoGas;         // deco gas [mbar] for each deco stop
 
     CalcSimulation(SimDiveTime, SimDiveDepth, SimNullTime, SimDesatTime, SimFlightTime);
 
-    SimDiveTime := SimDecoTime;
+    SimDiveTime  := SimDecoTime;
     SimDiveDepth := SimDecoDepth;
     
     if k > DECORANGE then begin    // emergency exit
@@ -306,7 +306,7 @@ begin
   end;
 
   TotalDecoTime := Limit(tt, 0, TIMEDISP); // cummulated deco stop time [s] (0..99:59)
-  TotalDecoGas := Limit(tg, 0, TANKMAX);   // cummulated deco stop gas [mbar] (0..650bar)
+  TotalDecoGas  := Limit(tg, 0, TANKMAX);  // cummulated deco stop gas [mbar] (0..650bar)
 end;
 
 //------------------------------------------------------------------------------
@@ -333,7 +333,7 @@ begin
 
 // input
 //------------------------------------------------------------------------------
-  t := Dtime;                      // planned dive time [s]
+  t  := Dtime;                     // planned dive time [s]
   Pa := AirPress + Ddepth;         // absolute ambient pressure [mbar]
 
 // globals
@@ -355,8 +355,8 @@ begin
   for k := 1 to MAXCOMP - 1 do begin
 
     ht := Kt[k] * 6;               // compartment half time [s]
-    a := Ka[k] / 1000.0 * sr;      // buehlmann parameter a [mbar] (scored)
-    b := Kb[k] / 10000.0;          // buehlmann parameter b
+    a  := Ka[k] / 1000.0 * sr;     // buehlmann parameter a [mbar] (scored)
+    b  := Kb[k] / 10000.0;         // buehlmann parameter b
 
     //**** calculate tissue saturation ****
 
@@ -366,9 +366,9 @@ begin
       th := ht;                    // --> standard for saturation
     end;
 
-    ex := 1.0 - Exp(-t / th * LN2);  // exponential time function of tissue in/out-gassing
-    dP := ex * (Pg - Px[k]);       // inert gas pressure (+/-)take [mbar] in tissue while t [s]
-    Px[k] := Px[k] + dP;           // new cumulated tissue pressure [mbar]
+    ex    := 1.0 - Exp(-t / th * LN2);  // exponential time function of tissue in/out-gassing
+    dP    := ex * (Pg - Px[k]);         // inert gas pressure (+/-)take [mbar] in tissue while t [s]
+    Px[k] := Px[k] + dP;                // new cumulated tissue pressure [mbar]
 
     Dx := Px[k];                   // temporary tissue pressure for simulation [mbar]
     Ph := (Px[k] - a) * b - Pb;    // highest allowed deco ceiling [mbar=cm]
@@ -446,13 +446,12 @@ begin
 
 // output
 //------------------------------------------------------------------------------
-  SimDecoDepth := Limit(ds, 0, DEPTHDISP); // deepest deco stop depth [cm] (0..19900)
-  SimDecoTime := Limit(st, 0, TIMERANGE);  // deepest deco stop time [s] (0..9:59)
-  SimDecoGas := Limit(gd, 0, TANKMAX);     // gas consum for deco stop [mbar] (0..650bar)
-  SimNullTime := Limit(nt, 0, TIMERANGE);  // remaining no deco time [s] (0..9:59)
-  SimDesatTime := Limit(dt, 0, TIMEDISP);  // desaturation time [s] (0..99:59)
-  SimFlightTime := Limit(ft, 0, TIMEDISP); // waiting time to fly [s] (0..99:59)
-                                           // 05.06.07 nk old=TIMESHORT
+  SimDecoDepth  := Limit(ds, 0, DEPTHDISP); // deepest deco stop depth [cm] (0..19900)
+  SimDecoTime   := Limit(st, 0, TIMERANGE); // deepest deco stop time [s] (0..9:59)
+  SimDecoGas    := Limit(gd, 0, TANKMAX);   // gas consum for deco stop [mbar] (0..650bar)
+  SimNullTime   := Limit(nt, 0, TIMERANGE); // remaining no deco time [s] (0..9:59)
+  SimDesatTime  := Limit(dt, 0, TIMEDISP);  // desaturation time [s] (0..99:59)
+  SimFlightTime := Limit(ft, 0, TIMEDISP);  // waiting time to fly [s] (0..99:59)
 end;
 
 end.

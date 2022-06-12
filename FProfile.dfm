@@ -46,10 +46,10 @@ object Profile: TProfile
     Width = 481
     Height = 225
     TabOrder = 1
-    object ProfileChart: TRChart
-      Left = 80
-      Top = 0
-      Width = 280
+    object ProfileChart: TDepthChart
+      Left = 8
+      Top = 16
+      Width = 417
       Height = 200
       AvoidDuplicateMarks = False
       AllocSize = 1000
@@ -373,6 +373,7 @@ object Profile: TProfile
       TextFontStyle = []
       TextBkStyle = tbClear
       TextAlignment = taCenter
+      OnMouseMoveInChart = ProfileChartMouseMoveInChart
     end
   end
   object ProfileLoop: TTimer

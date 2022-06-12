@@ -1,7 +1,7 @@
 // Program Info
-// Date 26.07.17
+// Date 28.05.22
 // Norbert Koechli
-// Copyright ©2006-2017 seanus systems
+// Copyright ©2006-2022 seanus systems
 
 unit FInfo;
 
@@ -40,7 +40,7 @@ const
   INFO_VERS      = ' Vers. ';
   INFO_YEAR      = 'YYYY';
   INFO_INI_YEAR  = '2005';
-  INFO_MIN_YEAR  = '2007';
+  INFO_MIN_YEAR  = '2022';       //28.05.22 nk old=2007
   INFO_READ_FILE = 'Readme.txt'; //20.10.07 nk add
 
   INFO_ACT_YEAR  = '#ACT_YEAR';
@@ -85,11 +85,10 @@ const
     INFO_REG_INFO,
     INFO_REG_USER);
 
-  //nk//mov to FRegister
   RegKeyOk = True;
   RegCompanyName = 'seanus systems';
-  RegFirstName = 'Norbert';
-  RegLastName = 'Köchli';
+  RegFirstName   = 'Benny';
+  RegLastName    = 'Hugentobler';
 
 var
   Info: TInfo;
@@ -102,31 +101,26 @@ uses FMain;
 {$R *.dfm}
 
 procedure TInfo.FormCreate(Sender: TObject);
-begin
-  HideMaxButton(Self);   //hide maximize button
-  HideMinButton(Self);   //hide minimize button
-
-  Position := poScreenCenter;
-  Width := 512;
-  Height := 343;
+begin //28.05.22 nk opt ff
+  Position  := poMainFormCenter; //28.05.22 nk old=poScreenCenter
+  Width     := 512;
+  Height    := 343;
   InfoDelay := INFO_DELAY;
-  InfoYear := FormatDateTime(INFO_YEAR, Now);
-  
-  if InfoYear < INFO_MIN_YEAR then InfoYear := INFO_MIN_YEAR;
+
   if InfoFile = cEMPTY then InfoFile := ProgPath + INFO_READ_FILE;
 
   with InfoLogo do begin
-    Align := alNone;
+    Align := alClient;   //old=alNone
     AutoSize := False;
     Center := False;
     Proportional := False;
     Stretch := False;
     Transparent := False;
     ShowHint := False;
-    Left := 0;
-    Top := 0;
-    Width := Info.Width;
-    Height := Info.Height;
+  //Left := 0;
+  //Top := 0;
+  //Width := Info.Width;
+  //Height := Info.Height;
     Visible := True;
   end;
 
@@ -181,7 +175,7 @@ begin
 
   with InfoLoop do begin
     Interval := 1000;  // 1s
-    Enabled := False;
+    Enabled  := False;
   end;
 end;
 
@@ -216,24 +210,24 @@ begin
 end;
 
 procedure TInfo.ShowLogo(Delay: Long);
-var
+var //28.05.22 nk opt
   i: Long;
 begin
   if Info.Visible then Exit;
 
   Show;
 
-  InfoMemo.Visible := False;
+  InfoLogo.Align    := alClient;
+  InfoMemo.Visible  := False;
   InfoBlack.Caption := ProductName + INFO_VERS + ProductVersion;
-  //nk//if not SimRegOk then InfoBlack.Caption := ProductName + INFO_VERS + ProductVersion + cSPLIT + REG_UNREG;
-  //nk//if SimTrial then InfoBlack.Caption := ProductName + INFO_VERS + ProductVersion + cSPLIT + SIM_TRIAL;
-
   InfoWhite.Caption := InfoBlack.Caption;
 
   for i := 1 to High(InfoText) do //show dynamic info text
     CreateInfoLines(i);
 
-  InfoDelay := Delay;
+  Application.ProcessMessages;
+
+  InfoDelay        := Delay;
   InfoLoop.Enabled := True;
 end;
 
@@ -246,7 +240,7 @@ begin
     with InfoMemo do begin
       Visible := True;
       Lines.LoadFromFile(InfoFile);
-      SelStart := 0;
+      SelStart  := 0;
       SelLength := 0;
     end;
   end;
@@ -255,7 +249,8 @@ begin
 end;
 
 procedure TInfo.CreateInfoLines(Line: Long);
-var
+var //28.05.22 nk opt
+  year: Integer;
   black: TLabel;
   white: TLabel;
   text: string;
@@ -263,10 +258,15 @@ begin
   try
     black := TLabel.Create(Self);
     white := TLabel.Create(Self);
-    text := Trim(InfoText[Line]);
+    text  := Trim(InfoText[Line]);
 
-    if (Pos(INFO_ACT_YEAR, text) > 0) then
+
+    if (Pos(INFO_ACT_YEAR, text) > 0) then begin
+      year     := StrToInt(INFO_MIN_YEAR);
+      InfoYear := FormatDateTime(INFO_YEAR, Now);
+      if StrToIntDef(InfoYear, year) < year then InfoYear := INFO_MIN_YEAR;
       text := StringReplace(text, INFO_ACT_YEAR, InfoYear, [rfReplaceAll]);
+    end;
 
     if (Pos(INFO_REG_OWNER, text) > 0) then
       text := StringReplace(text, INFO_REG_OWNER, RegCompanyName, [rfReplaceAll]);
@@ -286,47 +286,47 @@ begin
     end;
 
     with black do begin
-      Parent := Self;
-      Name := INFO_BLACK + IntToStr(Line);
-      Alignment := taLeftJustify;
-      AutoSize := True;
+      Parent        := Self;
+      Name          := INFO_BLACK + IntToStr(Line);
+      Alignment     := taLeftJustify;
+      AutoSize      := True;
       ShowAccelChar := False;
-      ParentFont := False;
-      Font.Name := INFO_FONT;
-      Font.Color := clBlack;
-      Font.Style := [];
-      Font.Size := 8;
-      Transparent := True;
-      Left := InfoBlack.Left;
-      Top := InfoBlack.Top + (Line + 1) * INFO_LINE;
-      Caption := text;
-      Visible := True;
+      ParentFont    := False;
+      Font.Name     := INFO_FONT;
+      Font.Color    := clBlack;
+      Font.Style    := [];
+      Font.Size     := 8;
+      Transparent   := True;
+      Left          := InfoBlack.Left;
+      Top           := InfoBlack.Top + (Line + 1) * INFO_LINE;
+      Caption       := text;
+      Visible       := True;
       BringToFront;
     end;
 
     with white do begin
-      Parent := Self;
-      Name := INFO_WHITE + IntToStr(Line);
-      Alignment := taLeftJustify;
-      AutoSize := True;
+      Parent        := Self;
+      Name          := INFO_WHITE + IntToStr(Line);
+      Alignment     := taLeftJustify;
+      AutoSize      := True;
       ShowAccelChar := False;
-      ParentFont := False;
-      Font.Name := INFO_FONT;
-      Font.Color := clWhite;
-      Font.Style := [];
-      Font.Size := 8;
-      Transparent := True;
-      Left := InfoBlack.Left + 1;
-      Top := InfoBlack.Top + (Line + 1) * INFO_LINE + 1;
-      Caption := text;
-      Visible := True;
+      ParentFont    := False;
+      Font.Name     := INFO_FONT;
+      Font.Color    := clWhite;
+      Font.Style    := [];
+      Font.Size     := 8;
+      Transparent   := True;
+      Left          := InfoBlack.Left + 1;
+      Top           := InfoBlack.Top + (Line + 1) * INFO_LINE + 1;
+      Caption       := text;
+      Visible       := True;
       BringToFront;
     end;
   except
     text := cEMPTY;
   end;
 
-  Application.ProcessMessages;
+//Application.ProcessMessages;
 end;
 
 end.

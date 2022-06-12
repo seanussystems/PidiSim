@@ -10623,12 +10623,8 @@ object Main: TMain
     Left = 168
     Top = 8
   end
-  object MainManifest: TXPManifest
-    Left = 128
-    Top = 8
-  end
   object MainMenu: TPopupMenu
-    Left = 208
+    Left = 128
     Top = 8
     object mnuBack: TMenuItem
       AutoCheck = True

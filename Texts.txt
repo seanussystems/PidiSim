@@ -1,15 +1,6 @@
-'******************************************************************************
-' TEXTS.INC      : Application Specific Multilingual Text Strings
-'------------------------------------------------------------------------------
-' Comment        : String length is defined as 'user string size' in Task Main
-'                  Message text lines must end with a new line delimiter NEWDEL$
-'                  Use round bracket { for left or } for right symbolic arrows
-'                  Use caret character # to dynamically replace text  
-'                  Small characters are only supported by font #2 (SMALLCHAR)
-'******************************************************************************
+' Resource text strings
 
-LangNum = LANGEN  ' EN (english)
-
+  if LangNum = LANGEN then  ' EN (english)
     Mask$(0) = "MAIN SELECTION"
     Mask$(1) = "NAVIGATION #"
     Mask$(2) = "SATURATION #"
@@ -21,7 +12,7 @@ LangNum = LANGEN  ' EN (english)
     Mask$(8) = "SHUT DOWN"
     Mask$(9) = "CLOSE"
 
-    Mask$(10) = "GAS SWITCHING"  ''nk'' dynamic depth
+    Mask$(10) = "GAS SWITCHING"
     Mask$(11) = "GAS 1   32 M"
     Mask$(12) = "GAS 2   46 M"
     Mask$(13) = "GAS 3   59 M"
@@ -220,7 +211,6 @@ LangNum = LANGEN  ' EN (english)
     Mask$(198) = "MORE"
     Mask$(199) = "CLOSE"
 
-    '02.02.07 nk add window DIVE PLANNER
     Mask$(200) = "DIVE PLANNER"
     Mask$(201) = "DIVE DEPTH"
     Mask$(202) = "DIVE TIME M~3"
@@ -304,7 +294,7 @@ LangNum = LANGEN  ' EN (english)
     Mask$(289) = "O2 PRESSURE|IS VERY HIGH|"
     Mask$(290) = "GAS IS LOW|ASCEND NOW|"
 
-  ' text 300..349 reserved for log book !!
+    ' text 300..349 reserved for log book !!
 
     Mask$(300) = "DIVE TIME @223"      ' s/min -> min/h (compressed)
     Mask$(301) = "MAX. DEPTH @246"     ' cm -> m/ft
@@ -369,12 +359,11 @@ LangNum = LANGEN  ' EN (english)
     Help$(39)  = "~5  ,ON"
     
     Help$(58)  = "}   ,EXECUTE"   ' command no 58
-  
-  end
+  endif
 
 '------------------------------------------------------------------------------
 
-LangNum = LANGDE  ' DE (DEUTSCH)
+  if LangNum = LANGDE then  ' DE (DEUTSCH)
 
     Mask$(0) = "HAUPTAUSWAHL"
     Mask$(1) = "NAVIGATION #"
@@ -508,6 +497,7 @@ LangNum = LANGDE  ' DE (DEUTSCH)
     Mask$(118) = ""
     Mask$(119) = ""
 
+
     Mask$(130) = "TIEFE"
     Mask$(131) = "ZEIT"
     Mask$(132) = "DEKO"
@@ -585,7 +575,6 @@ LangNum = LANGDE  ' DE (DEUTSCH)
     Mask$(198) = "WEITER"
     Mask$(199) = "SCHLIESSEN"
 
-    '02.02.07 nk add window DIVE PLANNER
     Mask$(200) = "TAUCHPLANER"
     Mask$(201) = "TAUCHTIEFE"
     Mask$(202) = "TAUCHZEIT"
@@ -743,7 +732,7 @@ LangNum = LANGDE  ' DE (DEUTSCH)
     Help$(38)  = "~4  ,AUS"
     Help$(39)  = "~5  ,AN"
 
-    Help$(58)  = "}   ,EXECUTE"   ' command no 58
-
+    Help$(58)  = "}   ,AUSFÜHREN"   ' command no 58
+  endif
 end
 

@@ -1,7 +1,7 @@
 // Graphical User Interface Task
-// Date 27.07.17
+// Date 28.05.22
 // Norbert Koechli
-// Copyright ©2005-2017 seanus systems
+// Copyright ©2005-2022 seanus systems
 
 // 25.07.17 nk opt for XE3 (AnsiString <-> string)
 // 25.07.17 nk opt use string instead of ShortString (e.g. old=string[MAXBUFF])
@@ -136,9 +136,9 @@ begin
     InitScreen(INITWIN); // after LoadSettings (Contrast...)
     UpdateLcd;
 
-    //nk//WaitDuration(DISPDELAY);  //TIGER?   show pidi logo
+    //WaitDuration(DISPDELAY);  //show pidi logo
 
-    DebugFlag := cOFF;  // debugger off   //nk//??
+    DebugFlag := cOFF;  // debugger off
     PhaseFlag := cON;
     DivePhase := PHASEINITIAL;
     InitFlag  := cINIT;
@@ -175,7 +175,7 @@ begin
         aWin := WINPOWER;
       end;
 
-      dclear := cON;
+      dclear    := cON;
       PhaseFlag := cOFF;
 
       case DivePhase of
@@ -395,7 +395,7 @@ begin
 
       if WinPos1 = WINBARO then begin
         dAirPress := AirPress;  // air pressure [hPa]
-        //dAltitude := Altitude;  // altitude above sea level [m] //TIGER only
+      //dAltitude := Altitude;  // altitude above sea level [m] //TIGER only
         dAltitude := Daq.edAltitude.IntValue; //DELPHI only [m/ft]
 
         ClearBox(91);
@@ -419,8 +419,8 @@ begin
           ConvertValue(dAirPress, prec, 237);  // hPa -> inHG
           dAirPress := (dAirPress * 100 + prec) div 10;
           DispNumValue(92, dAirPress);
-          //prec := 0; // altitude above sea level [ft]  //Tiger only
-          //ConvertValue(dAltitude, prec, 229);  // m -> ft
+        //prec := 0; // altitude above sea level [ft]  //Tiger only
+        //ConvertValue(dAltitude, prec, 229);  // m -> ft
         end else begin
           DispNumValue(91, dAirPress);
         end;
@@ -871,7 +871,7 @@ begin
       end;
 
       cKEYRIGHT: begin                    // right - backlite off
-        //nk// setpower[PBACKLITE, cOFF);
+        //nk// SetPower[PBACKLITE, cOFF);
         LiteFlag := cOFF;
       end;
 
@@ -2179,7 +2179,7 @@ LOADDIVE:
   // start day, date, time & dive of the day [WD DD.MM.YY hh:mmA/P-N]
   dtime := HIGHWORD * DiveCatalog[dcat, 3] + DiveCatalog[dcat, 4]; // start date & time [s]
   FormatTimeDate(dtime, stime, sdate, smon, sday, lday, tf);       // get time and date as string
-  tf := LowerCase(tf);
+  tf    := LowerCase(tf);
   ptext := sday + sSPACE + sdate + sSPACE + stime + tf + sSLASH + IntToStr(DiveCatalog[dcat, 6]);
 
   ClearBox(173);
@@ -2464,9 +2464,8 @@ begin
   pbox := 174;               // 1st pointer box
   dbox := 200;               // 1st box number of dive parameter
   yinc := 8;                 // y box increment (1..10)
-  ys := BoxSpec[dbox, 3];    // y pos of 1st log book box
-  yp := BoxSpec[pbox, 3];    // y pos of 1st pointer box
-
+  ys   := BoxSpec[dbox, 3];  // y pos of 1st log book box
+  yp   := BoxSpec[pbox, 3];  // y pos of 1st pointer box
   dcat := 0;                 // number of dive in catalog (1..dmax)
   dmax := DiveCatalog[0, 4]; // last dive catalog number
 
@@ -2502,7 +2501,7 @@ LOADDIVE:
   // start day, date, time & dive of the day [WD DD.MM.YY hh:mmA/P-N]
   dtime := HIGHWORD * DiveCatalog[dcat, 3] + DiveCatalog[dcat, 4]; // start date & time [s]
   FormatTimeDate(dtime, stime, sdate, smon, sday, lday, tf);       // get time and date as string
-  tf := LowerCase(tf);
+  tf    := LowerCase(tf);
   ptext := sday + sSPACE + sdate + sSPACE + stime + tf + sSLASH + IntToStr(DiveCatalog[dcat, 6]);
 
   ClearBox(173);
@@ -2510,12 +2509,12 @@ LOADDIVE:
   DispText(175, ptext, NORMPOS);
   DispText(176, IntToStr(DiveCatalog[dcat, 5]), NORMPOS);  // actual dive log number
 
-  hmin := 0;
-  hpos := 0;
-  k := cCLEAR;
-  knum := cKEYNONE;
+  hmin  := 0;
+  hpos  := 0;
+  k     := cCLEAR;
+  knum  := cKEYNONE;
   kflag := KEYINIT;
-  tctr := cCLEAR;
+  tctr  := cCLEAR;
   lpage := 1;
 
 NEXTPAGE: // format new page of log book
@@ -2525,17 +2524,17 @@ NEXTPAGE: // format new page of log book
   DispText(173, Mask[197] + sSPACE + ptext, LEFTPOS); // disp page n/m
 
   for lpos := 0 to DIVELINES - 1 do begin
-    BoxSpec[dbox, 3] := ys + lpos * yinc;
+    BoxSpec[dbox,     3] := ys + lpos * yinc;
     BoxSpec[dbox + 1, 3] := ys + lpos * yinc;
 
-    ldat := (lpage - 1) * DIVELINES + lpos;  // log book parameter 0..39
-    vdat := DiveData[ldat];
+    ldat  := (lpage - 1) * DIVELINES + lpos; // log book parameter 0..39
+    vdat  := DiveData[ldat];
     ptext := Mask[300 + ldat];               // log book parameter and unit text
-    upos := Pos(sATSIGN, ptext);             // 05.05.07 nk TIGER upos = instr(ATSIGN$, ptext$, 0, 4)
+    upos  := Pos(sATSIGN, ptext);            // 05.05.07 nk TIGER upos = instr(ATSIGN$, ptext$, 0, 4)
 
     if upos > 0 then begin                   // format unit and make converion
       utext := RightStr(ptext, 3);           // cut unit code
-      tuni := StrToInt(utext);
+      tuni  := StrToInt(utext);
 
       if tuni >= UNITEXT then begin          // unit (not time) conversion
       //nk//  tuni := tuni + UnitFlag;       // depending on UnitFlag
@@ -2568,7 +2567,7 @@ NEXTPAGE: // format new page of log book
   while InitFlag = cINIT do begin
     Comm := cCLEAR;
 
-    WaitDuration(GUIDELAY div GUISPEEDUP); //DELPHI too slow
+    WaitDuration(GUIDELAY div GUISPEEDUP);   //DELPHI too slow
 
     if kflag <> KEYINIT then begin
       GetKeyNum(knum);                       // get number of depressed key
@@ -2639,7 +2638,7 @@ NEXTPAGE: // format new page of log book
           kflag := KEYTURN;
         end;
       end; // case
-    end; // if key pressed
+    end;   // if key pressed
 
     tctr := tctr + 1;                        // increment timeout counter
 
@@ -2712,12 +2711,12 @@ var
   dtime: Long;
   ptext, stime, sdate, smon, sday, lday, tf: string;
 begin
-  rcomm := 100 + Comm;      // return code if dive selected
-  hmax := DIVELINES - 1;    // number of dive catalog lines
-  dbox := 224;              // 1st box number of dive data
-  pbox := 228;              // 1st box number of pointer
-  yinc := 8;                // y box increment (1..10)
-  ys := BoxSpec[dbox, 3];   // y pos of 1st dive line box
+  rcomm := 100 + Comm;       // return code if dive selected
+  hmax  := DIVELINES - 1;    // number of dive catalog lines
+  dbox  := 224;              // 1st box number of dive data
+  pbox  := 228;              // 1st box number of pointer
+  yinc  := 8;                // y box increment (1..10)
+  ys    := BoxSpec[dbox, 3]; // y pos of 1st dive line box
 
   SaveLcd(LCDLAYER_1);
 

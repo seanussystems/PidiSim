@@ -1,7 +1,7 @@
 // Pidi Global Constants and Definitions for Outlook (Delphi only)
-// Date 26.07.17
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2005-2017 seanus systems
+// Copyright ©2005-2022 seanus systems
 
 unit UPidi;
 

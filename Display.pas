@@ -1,7 +1,7 @@
 // Graphic Display Functions
-// Date 25.07.17
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2007-2017 seanus systems
+// Copyright ©2007-2022 seanus systems
 
 // 25.07.17 nk opt for XE3 (AnsiString <-> string)
 // 25.07.17 nk opt use string instead of ShortString (e.g. old=string[MAXBUFF])
@@ -736,22 +736,14 @@ end;
 procedure InitScreen(Win: Byte);
 begin
   case Win of
-    0:
-      LcdBuffer.Picture.Assign(WINDOW00.Picture);
-    1:
-      LcdBuffer.Picture.Assign(WINDOW01.Picture);
-    2:
-      LcdBuffer.Picture.Assign(WINDOW02.Picture);
-    3:
-      LcdBuffer.Picture.Assign(WINDOW03.Picture);
-    4:
-      LcdBuffer.Picture.Assign(WINDOW04.Picture);
-    5:
-      LcdBuffer.Picture.Assign(WINDOW05.Picture);
-    6:
-      LcdBuffer.Picture.Assign(WINDOW06.Picture);
-    7:
-      LcdBuffer.Picture.Assign(WINDOW07.Picture);
+    0: LcdBuffer.Picture.Assign(WINDOW00.Picture);
+    1: LcdBuffer.Picture.Assign(WINDOW01.Picture);
+    2: LcdBuffer.Picture.Assign(WINDOW02.Picture);
+    3: LcdBuffer.Picture.Assign(WINDOW03.Picture);
+    4: LcdBuffer.Picture.Assign(WINDOW04.Picture);
+    5: LcdBuffer.Picture.Assign(WINDOW05.Picture);
+    6: LcdBuffer.Picture.Assign(WINDOW06.Picture);
+    7: LcdBuffer.Picture.Assign(WINDOW07.Picture);
   else
     GraBuff := IntToStr(Win);
     LogError('InitScreen', 'Unsupported window', GraBuff, $90);
@@ -768,12 +760,12 @@ var
 begin
 
   win := BoxSpec[Box, 1];  // actual window
-  wx := WinSpec[win, 1];
-  wy := WinSpec[win, 2];
-  bx := BoxSpec[Box, 2];
-  by := BoxSpec[Box, 3];
-  dx := BoxSpec[Box, 4];
-  dy := BoxSpec[Box, 5];
+  wx  := WinSpec[win, 1];
+  wy  := WinSpec[win, 2];
+  bx  := BoxSpec[Box, 2];
+  by  := BoxSpec[Box, 3];
+  dx  := BoxSpec[Box, 4];
+  dy  := BoxSpec[Box, 5];
   dot := BoxSpec[Box, 9] mod 10;
 
   // show inverse boxes for debugging
@@ -814,13 +806,13 @@ begin
   py := cCLEAR;
   px := cCLEAR;
 
-  win := BoxSpec[Box, 1];  // actual window
-  wx := WinSpec[win, 1];   // start x-pos of window
-  wy := WinSpec[win, 2];   // start y-pos of window
+  win := BoxSpec[Box, 1];   // actual window
+  wx  := WinSpec[win, 1];   // start x-pos of window
+  wy  := WinSpec[win, 2];   // start y-pos of window
 
-  bx := BoxSpec[Box, 2];   // start x-pos of box
-  by := BoxSpec[Box, 3];   // start y-pos of box
-  fd := BoxSpec[Box, 7];   // font definition
+  bx  := BoxSpec[Box, 2];   // start x-pos of box
+  by  := BoxSpec[Box, 3];   // start y-pos of box
+  fd  := BoxSpec[Box, 7];   // font definition
 
   lead := BoxSpec[Box, 6];         // leading zero
   dmax := BoxSpec[Box, 8] div 10;  // total number of digits
@@ -836,7 +828,7 @@ begin
   end;
 
   if tval >= tmax then begin       // display range overflow
-    tmax := POSERROR;              // special error sign (!)
+    tmax    := POSERROR;           // special error sign (!)
     GraBuff := IntToStr(Box);
     LogError('DispNumValue', 'Display range overflow in box', GraBuff, $98);
   end else begin
@@ -853,7 +845,7 @@ begin
   ly := FontDef[fd, 4];            // font file height
 
   first := cOFF;
-  dval := Round(Power(10, (dmax - 1)));
+  dval  := Round(Power(10, (dmax - 1)));
 
   // show inverse boxes for debugging
   if DebugFlag = cON then begin
@@ -877,8 +869,8 @@ begin
 
   if (tval = 0) and (dnum = 0) then begin // disp value = 0
     first := cON;
-    px := fx * (dmax - 1);
-    dmax := 1;
+    px    := fx * (dmax - 1);
+    dmax  := 1;
   end;
 
   if dnum = 0 then begin
@@ -915,7 +907,7 @@ begin
 
     if d = dpos then begin
       first := cON;
-      fpos := ddel;         // digit delimiter
+      fpos  := ddel;         // digit delimiter
     end;
 
     if tmax <> cOFF then begin
@@ -925,16 +917,11 @@ begin
     fptr := fpos * fx;      // pointer to digit in font table
 
     case fd of              // select font
-      5:
-        GraphicCopy(FONT05, LCDXRANGE, LCDYRANGE, wx + bx + px, wy + by + py, lx, ly, fptr, 0, fx, fy, dmod);
-      6:
-        GraphicCopy(FONT06, LCDXRANGE, LCDYRANGE, wx + bx + px, wy + by + py, lx, ly, fptr, 0, fx, fy, dmod);
-      7:
-        GraphicCopy(FONT07, LCDXRANGE, LCDYRANGE, wx + bx + px, wy + by + py, lx, ly, fptr, 0, fx, fy, dmod);
-      8:
-        GraphicCopy(FONT08, LCDXRANGE, LCDYRANGE, wx + bx + px, wy + by + py, lx, ly, fptr, 0, fx, fy, dmod);
-      9:
-        GraphicCopy(FONT09, LCDXRANGE, LCDYRANGE, wx + bx + px, wy + by + py, lx, ly, fptr, 0, fx, fy, dmod);
+      5: GraphicCopy(FONT05, LCDXRANGE, LCDYRANGE, wx + bx + px, wy + by + py, lx, ly, fptr, 0, fx, fy, dmod);
+      6: GraphicCopy(FONT06, LCDXRANGE, LCDYRANGE, wx + bx + px, wy + by + py, lx, ly, fptr, 0, fx, fy, dmod);
+      7: GraphicCopy(FONT07, LCDXRANGE, LCDYRANGE, wx + bx + px, wy + by + py, lx, ly, fptr, 0, fx, fy, dmod);
+      8: GraphicCopy(FONT08, LCDXRANGE, LCDYRANGE, wx + bx + px, wy + by + py, lx, ly, fptr, 0, fx, fy, dmod);
+      9: GraphicCopy(FONT09, LCDXRANGE, LCDYRANGE, wx + bx + px, wy + by + py, lx, ly, fptr, 0, fx, fy, dmod);
     else
         GraBuff := IntToStr(fd) + ' in box ' + IntToStr(Box);
         LogError('DispNumValue', 'Unsupported font', GraBuff, $91);
@@ -942,11 +929,11 @@ begin
     end;
 
     if fpos <= POSMINUS then begin // numbers or minus sign
-      px := px + fx;               // position of next digit
+      px   := px + fx;             // position of next digit
       tval := tval - (digit * dval);
       dval := dval div 10;
     end else begin
-      px := px + 2 * fs;           // space for delimiter
+      px   := px + 2 * fs;         // space for delimiter
     end;
   end;
 end;
@@ -978,8 +965,8 @@ begin
   px := cCLEAR;
 
   win := BoxSpec[Box, 1];           // actual window
-  wx := WinSpec[win, 1];            // start x-pos of window
-  wy := WinSpec[win, 2];            // start y-pos of window
+  wx  := WinSpec[win, 1];           // start x-pos of window
+  wy  := WinSpec[win, 2];           // start y-pos of window
 
   bx := BoxSpec[Box, 2];            // start x-pos of box
   by := BoxSpec[Box, 3];            // start y-pos of box
@@ -1018,13 +1005,13 @@ begin
 
   //Tiger: d=0 to dmax-1
   for d := 1 to dmax do begin        // calculate length of text in dots
-    c := Text[d];                    // get next character
+    c    := Text[d];                 // get next character
     Anum := Ord(c) + sym;            // ascii number of character (A=65)
     if Anum = SYMBCODE then begin
       sym := SYMBCODE - NAL;         // symbol offset (~1 = SYMBCODE + 1)
     end else begin
       GetFont(fd, Anum, fpos, fdim, fcor);
-      ox := ox + fs + fdim;
+      ox  := ox + fs + fdim;
       sym := cOFF;
     end;
   end;
@@ -1032,14 +1019,14 @@ begin
   ox := ox + fs; //pixels for all chars
 
   if (ox > dx) or (ox > LCDXRANGE) then begin
-    tpos := cCLEAR;
+    tpos    := cCLEAR;
     GraBuff := IntToStr(Box) + ' (chars ' + IntToStr(dmax) + ')';
     LogError('DispText', 'Text too long in box', GraBuff, $92);
   end;
 
   case tpos of                       // text orientation
-    1:  ox := (dx - ox) div 2;       //   middle
-    2:  ox := dx - ox;               //   right
+    1: ox := (dx - ox) div 2;        //   middle
+    2: ox := dx - ox;                //   right
   else
     ox := cCLEAR;                    //   left
   end;
@@ -1060,12 +1047,12 @@ begin
 
     if fpos >= ROW2CHAR then begin   // small characters, numbers, and unit symbols
       fpos := fpos - ROW2CHAR;       // are defined in the 2nd row
-      ft := fy;                      // of font bitmap file
+      ft   := fy;                    // of font bitmap file
     end else begin
       ft := 0;
     end;
 
-    fx := fdim + fs;
+    fx   := fdim + fs;
     fptr := fpos * cx;    // pointer to character in font table
 
     case fd of // select font
@@ -1079,10 +1066,12 @@ begin
          end;
       3: begin
            oy := 0;
-           GraphicCopy(FONT03, LCDXRANGE, LCDYRANGE, wx + bx + px + ox, wy +by + py, lx, ly, fptr, ft, fx, fy, dmod);         end;
+           GraphicCopy(FONT03, LCDXRANGE, LCDYRANGE, wx + bx + px + ox, wy +by + py, lx, ly, fptr, ft, fx, fy, dmod);
+         end;
       4: begin
            oy := 1;
-           GraphicCopy(FONT04, LCDXRANGE, LCDYRANGE, wx + bx + px + ox, wy + by + py, lx, ly, fptr, ft, fx, fy, dmod);         end;
+           GraphicCopy(FONT04, LCDXRANGE, LCDYRANGE, wx + bx + px + ox, wy + by + py, lx, ly, fptr, ft, fx, fy, dmod);
+         end;
     else
         GraBuff := IntToStr(fd) + ' in box ' + IntToStr(Box);
         LogError('DispText', 'Unsupported font', GraBuff, $91);
@@ -1106,23 +1095,23 @@ begin
            end;
         2: begin // grave
              SetDot(wx+bx+px+ox+fdim-1, wy+by+py-oy, don, LCDPEN);
-             SetDot(wx+bx+px+ox+fdim, wy+by+py-oy, don, LCDPEN);
+             SetDot(wx+bx+px+ox+fdim,   wy+by+py-oy, don, LCDPEN);
            end;
         3: begin // circumflex or tilde
-             SetDot(wx+bx+px+ox+fmid, wy+by+py-oy, don, LCDPEN);
+             SetDot(wx+bx+px+ox+fmid,   wy+by+py-oy, don, LCDPEN);
              SetDot(wx+bx+px+ox+fmid+1, wy+by+py-oy, don, LCDPEN);
            end;
         4: begin // umlaut
-             SetDot(wx+bx+px+ox+1, wy+by+py-oy, don, LCDPEN);
-             SetDot(wx+bx+px+ox+1, wy+by+py-oy+1, dof, LCDPEN);
-             SetDot(wx+bx+px+ox+fdim, wy+by+py-oy, don, LCDPEN);
+             SetDot(wx+bx+px+ox+1,    wy+by+py-oy,   don, LCDPEN);
+             SetDot(wx+bx+px+ox+1,    wy+by+py-oy+1, dof, LCDPEN);
+             SetDot(wx+bx+px+ox+fdim, wy+by+py-oy,   don, LCDPEN);
              SetDot(wx+bx+px+ox+fdim, wy+by+py-oy+1, dof, LCDPEN);
            end;
         5: begin // special circumflex
-             SetDot(wx+bx+px+ox+fmid, wy+by+py-oy, don, LCDPEN);
-             SetDot(wx+bx+px+ox+1, wy+by+py-oy+1, dof, LCDPEN);
-             SetDot(wx+bx+px+ox+fmid+1, wy+by+py-oy, don, LCDPEN);
-             SetDot(wx+bx+px+ox+fdim, wy+by+py-oy+1, dof, LCDPEN);
+             SetDot(wx+bx+px+ox+fmid,   wy+by+py-oy,   don, LCDPEN);
+             SetDot(wx+bx+px+ox+1,      wy+by+py-oy+1, dof, LCDPEN);
+             SetDot(wx+bx+px+ox+fmid+1, wy+by+py-oy,   don, LCDPEN);
+             SetDot(wx+bx+px+ox+fdim,   wy+by+py-oy+1, dof, LCDPEN);
            end;
         6: begin // cedil
              SetDot(wx+bx+px+ox+fdim-1, wy+by+py+fy-1, don, LCDPEN);
@@ -1146,8 +1135,8 @@ var
   lx: Word;
 begin
   win := BoxSpec[Box, 1];    // actual window
-  wx := WinSpec[win, 1];     // start x-pos of window
-  wy := WinSpec[win, 2];     // start y-pos of window
+  wx  := WinSpec[win, 1];    // start x-pos of window
+  wy  := WinSpec[win, 2];    // start y-pos of window
 
   bx := BoxSpec[Box, 2];     // start x-pos of box
   by := BoxSpec[Box, 3];     // start y-pos of box
@@ -1197,21 +1186,21 @@ var
   dmod, bx, by, dx, dy,ly, md, wx, wy, win: Byte;
   lx: Word;
 begin
-  win := BoxSpec[Box, 1];           // actual window
-  wx := WinSpec[win, 1];            // start x-pos of window
-  wy := WinSpec[win, 2];            // start y-pos of window
+  win := BoxSpec[Box, 1];             // actual window
+  wx  := WinSpec[win, 1];             // start x-pos of window
+  wy  := WinSpec[win, 2];             // start y-pos of window
 
-  bx := BoxSpec[Box, 2];            // start x pos of box
-  by := BoxSpec[Box, 3];            // start y pos of box
-  dx := BoxSpec[Box, 4];            // x-dim of box
-  dy := BoxSpec[Box, 5];            // y-dim of box
-  md := BoxSpec[Box, 6];            // number of bitmap
-  lx := BoxSpec[Box, 7] * LCDBYTE;  // bitmap file length
-  ly := BoxSpec[Box, 8];            // bitmap file height
-  dmod := BoxSpec[Box, 9] mod 10;   // drawing mode
+  bx   := BoxSpec[Box, 2];            // start x pos of box
+  by   := BoxSpec[Box, 3];            // start y pos of box
+  dx   := BoxSpec[Box, 4];            // x-dim of box
+  dy   := BoxSpec[Box, 5];            // y-dim of box
+  md   := BoxSpec[Box, 6];            // number of bitmap
+  lx   := BoxSpec[Box, 7] * LCDBYTE;  // bitmap file length
+  ly   := BoxSpec[Box, 8];            // bitmap file height
+  dmod := BoxSpec[Box, 9] mod 10;     // drawing mode
 
   if dmod > LCDDOTNEG then begin
-    dmod := LCDDOTON;               // unsupported dot mode
+    dmod := LCDDOTON;                 // unsupported dot mode
   end;
 
   // show inverse boxes for debugging
@@ -1225,12 +1214,9 @@ begin
   end;
 
   case md of // select bitmap
-    1:
-      GraphicCopy(BITMAP01, LCDXRANGE, LCDYRANGE, wx + bx,wy + by, lx, ly, Xof, Yof, dx, dy, dmod);
-    2:
-      GraphicCopy(BITMAP02, LCDXRANGE, LCDYRANGE, wx + bx,wy + by, lx, ly, Xof, Yof, dx, dy, dmod);
-    3:
-      GraphicCopy(BITMAP03, LCDXRANGE, LCDYRANGE, wx + bx,wy + by, lx, ly, Xof, Yof, dx, dy, dmod);
+    1: GraphicCopy(BITMAP01, LCDXRANGE, LCDYRANGE, wx + bx,wy + by, lx, ly, Xof, Yof, dx, dy, dmod);
+    2: GraphicCopy(BITMAP02, LCDXRANGE, LCDYRANGE, wx + bx,wy + by, lx, ly, Xof, Yof, dx, dy, dmod);
+    3: GraphicCopy(BITMAP03, LCDXRANGE, LCDYRANGE, wx + bx,wy + by, lx, ly, Xof, Yof, dx, dy, dmod);
   else
     GraBuff := IntToStr(md) + ' in box ' + IntToStr(Box);
     LogError('DispBitmap', 'Unsupported bitmap', GraBuff, $91);
@@ -1271,20 +1257,13 @@ begin
   end;
 
   case wt of
-    1:
-      GraphicCopy(WINDOW01, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
-    2:
-      GraphicCopy(WINDOW02, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
-    3:
-      GraphicCopy(WINDOW03, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
-    4:
-      GraphicCopy(WINDOW04, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
-    5:
-      GraphicCopy(WINDOW05, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
-    6:
-      GraphicCopy(WINDOW06, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
-    7:
-      GraphicCopy(WINDOW07, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
+    1: GraphicCopy(WINDOW01, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
+    2: GraphicCopy(WINDOW02, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
+    3: GraphicCopy(WINDOW03, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
+    4: GraphicCopy(WINDOW04, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
+    5: GraphicCopy(WINDOW05, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
+    6: GraphicCopy(WINDOW06, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
+    7: GraphicCopy(WINDOW07, LCDXRANGE, LCDYRANGE, wx + sx, wy + sy, hx, hy, sx, sy, ex, ey, LCDDOTON);
   else
     GraBuff := IntToStr(wt) + ' in window ' + IntToStr(Win);
     LogError('DispWindow', 'Unsupported window type', GraBuff, $91);
@@ -1302,15 +1281,15 @@ var
   x, y, dmod, md, tp, dx, dy, bx, by, sx, sy, px, py, wx, wy, dot, win: Byte;
   vx, vy, val: Integer;
 begin
-  win := BoxSpec[Box, 1];  // actual window
-  wx := WinSpec[win, 1];
-  wy := WinSpec[win, 2];
-  bx := BoxSpec[Box, 2];
-  by := BoxSpec[Box, 3];
-  dx := BoxSpec[Box, 4];
-  dy := BoxSpec[Box, 5];
-  md := BoxSpec[Box, 7];
-  tp := BoxSpec[Box, 8];
+  win  := BoxSpec[Box, 1];  // actual window
+  wx   := WinSpec[win, 1];
+  wy   := WinSpec[win, 2];
+  bx   := BoxSpec[Box, 2];
+  by   := BoxSpec[Box, 3];
+  dx   := BoxSpec[Box, 4];
+  dy   := BoxSpec[Box, 5];
+  md   := BoxSpec[Box, 7];
+  tp   := BoxSpec[Box, 8];
   dmod := BoxSpec[Box, 9] mod 10;
 
   case dmod of
@@ -1325,42 +1304,42 @@ begin
   case tp of
     1: begin                         // bar left-rigth
          val := val * dx;
-         sx := 0;
-         sy := 0;
-         vx := val div cFULL - 1;
-         vy := dy - 1;
-         px := Limit(vx, 0, cFULL);  // 09.05.07 nk add
-         py := 0;
+         sx  := 0;
+         sy  := 0;
+         vx  := val div cFULL - 1;
+         vy  := dy - 1;
+         px  := Limit(vx, 0, cFULL);  // 09.05.07 nk add
+         py  := 0;
        end;
 
     2: begin                         // bar bottom-up
          val := val * dy;
-         sx := 0;
-         sy := dy - val div cFULL;
-         vx := dx - 1;
-         vy := dy - 1;
-         px := 0;
-         py := Limit(sy, 0, cFULL);  //09.05.07 nk add
+         sx  := 0;
+         sy  := dy - val div cFULL;
+         vx  := dx - 1;
+         vy  := dy - 1;
+         px  := 0;
+         py  := Limit(sy, 0, cFULL);  //09.05.07 nk add
        end;
 
     3: begin                         // bar rigth-left
          val := val * dx;
-         sx := dx - val div cFULL;
-         sy := 0;
-         vx := dx - 1;
-         vy := dy - 1;
-         px := Limit(sx, 0, cFULL);  //09.05.07 nk add
-         py := 0;
+         sx  := dx - val div cFULL;
+         sy  := 0;
+         vx  := dx - 1;
+         vy  := dy - 1;
+         px  := Limit(sx, 0, cFULL);  //09.05.07 nk add
+         py  := 0;
        end;
 
     4: begin                         // bar top-down
          val := val * dy;
-         sx := 0;
-         sy := 0;
-         vx := dx - 1;
-         vy := val div cFULL - 1;
-         px := 0;
-         py := Limit(vy, 0, cFULL);  //09.05.07 nk add
+         sx  := 0;
+         sy  := 0;
+         vx  := dx - 1;
+         vy  := val div cFULL - 1;
+         px  := 0;
+         py  := Limit(vy, 0, cFULL);  //09.05.07 nk add
        end;
     else
       GraBuff := IntToStr(tp) + ' in box ' + IntToStr(Box);
@@ -1420,13 +1399,13 @@ procedure DrawBox(Box: Word);
 var
   x, y, ftyp, dmod, dx, dy, bx, by, wx, wy, xe, ye, xs, ys, dot, win: Byte;
 begin
-  win := BoxSpec[Box, 1];  // actual window
-  wx := WinSpec[win, 1];
-  wy := WinSpec[win, 2];
-  bx := BoxSpec[Box, 2];
-  by := BoxSpec[Box, 3];
-  dx := BoxSpec[Box, 4];
-  dy := BoxSpec[Box, 5];
+  win  := BoxSpec[Box, 1];  // actual window
+  wx   := WinSpec[win, 1];
+  wy   := WinSpec[win, 2];
+  bx   := BoxSpec[Box, 2];
+  by   := BoxSpec[Box, 3];
+  dx   := BoxSpec[Box, 4];
+  dy   := BoxSpec[Box, 5];
   ftyp := BoxSpec[Box, 6];          // box frame type
   dmod := BoxSpec[Box, 9] mod 10;  // drawing mode
 
@@ -1465,9 +1444,9 @@ begin
     SetDot(wx + bx + x, wy + by, dot, LCDPEN);           // draw top line
     SetDot(wx + bx + x, wy + by + dy - 1, dot, LCDPEN);  // draw bottom line
     case ftyp of                      // shadows -ligth source
-      2: SetDot(wx + bx + x + 1, wy + by - 1, dot, LCDPEN);  // bottom - left
+      2: SetDot(wx + bx + x + 1, wy + by - 1,  dot, LCDPEN); // bottom - left
       3: SetDot(wx + bx + x + 1, wy + by + dy, dot, LCDPEN); // top - left
-      4: SetDot(wx + bx + x - 1, wy + by - 1, dot, LCDPEN);  // top - right
+      4: SetDot(wx + bx + x - 1, wy + by - 1,  dot, LCDPEN); // top - right
       5: SetDot(wx + bx + x - 1, wy + by + dy, dot, LCDPEN); // bottom right
     end;
   end;
@@ -1478,8 +1457,8 @@ begin
     case ftyp of                      // shadows -ligth source
       2: SetDot(wx + bx + dx, wy + by + y - 1, dot, LCDPEN); // bottom - left
       3: SetDot(wx + bx + dx, wy + by + y + 1, dot, LCDPEN); // top - left
-      4: SetDot(wx + bx - 1, wy + by + y - 1, dot, LCDPEN);  // top - right
-      5: SetDot(wx + bx - 1, wy + by + y + 1, dot, LCDPEN);  // bottom right
+      4: SetDot(wx + bx - 1,  wy + by + y - 1, dot, LCDPEN); // top - right
+      5: SetDot(wx + bx - 1,  wy + by + y + 1, dot, LCDPEN); // bottom right
     end;
   end;
 end;
@@ -1494,16 +1473,16 @@ var
   d, x, y, don, dof, dx, dy, bx, by, wx, wy, dot, win: Byte;
 begin
   win := BoxSpec[Box, 1];           // actual window
-  wx := WinSpec[win, 1];
-  wy := WinSpec[win, 2];
-  bx := BoxSpec[Box, 2];
-  by := BoxSpec[Box, 3];
-  dx := BoxSpec[Box, 4];
-  dy := BoxSpec[Box, 5];
+  wx  := WinSpec[win, 1];
+  wy  := WinSpec[win, 2];
+  bx  := BoxSpec[Box, 2];
+  by  := BoxSpec[Box, 3];
+  dx  := BoxSpec[Box, 4];
+  dy  := BoxSpec[Box, 5];
   don := BoxSpec[Box, 8];           // number of black dots
   dof := BoxSpec[Box, 9];           // number of white dots
 
-  d := don + 1;
+  d   := don + 1;
   dot := LCDDOTON;
 
   // 09.05.07 nk opt ff
@@ -1515,7 +1494,7 @@ begin
           d := d - 1;
           if d = 0 then begin
             dot := LCDDOTOFF;
-            d := dof + 1;
+            d   := dof + 1;
           end;
         end;
 
@@ -1523,7 +1502,7 @@ begin
           d := d - 1;
           if d = 0 then begin
             dot := LCDDOTON;
-            d := don;
+            d   := don;
           end;
         end;
       end;
@@ -1539,7 +1518,7 @@ begin
           d := d - 1;
           if d = 0 then begin
             dot := LCDDOTOFF;
-            d := dof + 1;
+            d   := dof + 1;
           end;
         end;
 
@@ -1547,7 +1526,7 @@ begin
           d := d - 1;
           if d = 0 then begin
             dot := LCDDOTON;
-            d := don;
+            d   := don;
           end;
         end;
       end;
@@ -1572,11 +1551,11 @@ begin
 
   with LcdBuffer.Canvas do begin
     Pen.Width := 1;
-    Pen.Mode := pmCopy;
+    Pen.Mode  := pmCopy;
     Pen.Style := psSolid;
     Pen.Color := col;
-    LcdPenX := Px;
-    LcdPenY := Py;
+    LcdPenX   := Px;
+    LcdPenY   := Py;
     MoveTo(LcdPenX, LcdPenY); // set pen position to start point
   end;
 end;

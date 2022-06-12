@@ -1,7 +1,7 @@
 // Power Supply and Digital Potmeter Functions
-// Date 25.07.17
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2007-2017 seanus systems
+// Copyright ©2007-2022 seanus systems
 
 // DELPHI: No power control for external voltage regulators implemented
 

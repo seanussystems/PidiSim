@@ -1,7 +1,7 @@
 // Interface to LCD Device Driver (Graphic Display Module)
-// Date 25.07.17
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2005-2017 seanus systems
+// Copyright ©2005-2022 seanus systems
 
 // 25.07.17 nk opt for XE3 (AnsiString <-> string)
 // 25.07.17 nk opt use string instead of ShortString (e.g. old=string[MAXBUFF])

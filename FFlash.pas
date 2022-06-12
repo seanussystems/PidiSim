@@ -1,7 +1,12 @@
 // Pidi Flash File Maker
-// Date 25.05.07
+// Date 26.05.22
 // Norbert Koechli
-// Copyright ©2007 seanus systems
+// Copyright ©2007-2022 seanus systems
+
+// 26.05.22 migrate to Embarcadero Delphi XE7 Update
+// 26.05.22 add multi-resolution icon container (16, 24, 32, 48, and 256 pixels, 256 colors)
+// 26.05.22 opt create Flash file in 'Flash' subfolder of program folder 'bin'
+// 26.05.22 Project is now open source hosted on GitHub
 
 unit FFlash;
 
@@ -28,8 +33,8 @@ type
   end;
 
 const
-  FLASH_PROG    = ' Flash Maker 1.0';
-  FLASH_PATH    = '.\';     // working dir = home dir
+  FLASH_PROG    = ' Flash Maker 1.1';
+  FLASH_PATH    = 'Flash\'; // working dir = home dir / 26.05.22 nk old= '.\'
   FLASH_FILE    = 'Flash';  // default flash file name
   FLASH_POST    = '.pfd';   // flash file ending
   FLASH_BACK    = '.bak';   // flash file backup copy
@@ -51,13 +56,13 @@ implementation
 
 procedure TFlash.FormCreate(Sender: TObject);
 begin
-  DisableMaxButton(Self);  // hide maximize button
-  DisableMinButton(Self);  // hide minimize button
+//DisableMaxButton(Self);  // hide maximize button
+//DisableMinButton(Self);  // hide minimize button
   
-  Caption := FLASH_PROG;
-  btMake.Tag := 0;
+  Caption        := FLASH_PROG;
+  btMake.Tag     := 0;
   btMake.Caption := 'Make';
-  edFlash.Text := FLASH_FILE;
+  edFlash.Text   := FLASH_FILE;
   edSectors.Text := IntToStr(MEMDEFSECT);
 end;
 
@@ -72,7 +77,7 @@ begin
   end;
   
   sectors := 0;
-  fname := Trim(edFlash.Text);
+  fname   := Trim(edFlash.Text);
 
   if Pos(FLASH_POST, fname) > 0 then begin
     Beep;
@@ -95,14 +100,15 @@ begin
     Exit;
   end;
 
-  fname := FLASH_PATH + fname + FLASH_POST;
+  // 26.05.22 nk add ProgPath
+  fname := ProgPath + FLASH_PATH + fname + FLASH_POST;
 
   CreateFlash(fname, sectors);
 end;
 
 procedure TFlash.edChange(Sender: TObject);
 begin
-  btMake.Tag := 0;
+  btMake.Tag     := 0;
   btMake.Caption := 'Make';
 end;
 
@@ -113,8 +119,8 @@ var
   ret, err: Integer;
   flash: file of byte; // binary coded flash file
 begin
-  err := 0;
-  btMake.Tag := 1;
+  err            := 0;
+  btMake.Tag     := 1;
   btMake.Caption := 'Working...';
   btMake.Enabled := False;
 
@@ -142,10 +148,10 @@ begin
 
   if err > 0 then begin
     Beep;
-    btMake.Tag := 5;
+    btMake.Tag     := 5;
     btMake.Caption := 'ERRORS: ' + IntToStr(err);
   end else begin
-    btMake.Tag := 9;
+    btMake.Tag     := 9;
     btMake.Caption := 'Done';
   end;
 

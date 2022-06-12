@@ -1,6 +1,7 @@
 object Flash: TFlash
   Left = 589
   Top = 235
+  BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Flash Maker'
   ClientHeight = 102
@@ -34,7 +35,7 @@ object Flash: TFlash
   object edFlash: TEdit
     Left = 8
     Top = 24
-    Width = 137
+    Width = 139
     Height = 21
     TabStop = False
     AutoSelect = False
