@@ -1,5 +1,5 @@
 (*------------------------------------------------------------------*)
-(* Berechnung von Dekompressionsdaten fr Tauchg„nge mit Pressluft  *)
+(* Berechnung von Dekompressionsdaten für Tauchg„nge mit Pressluft  *)
 (*                            und Nitrox                            *)
 (*                                                                  *)
 (*                       (C) 1999 by Peter Rachow                   *)
