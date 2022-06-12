@@ -1,7 +1,5 @@
 // Dive Profile Chart
 // Date 12.06.22
-// Norbert Koechli
-// Copyright ©2005-2022 seanus systems
 
 unit FProfile;
 
@@ -75,7 +73,7 @@ begin
     BevelOuter := bvNone;
     Ctl3D := False;
     Caption := sEMPTY;
-    Cursor := crCross;
+    Cursor := crDefault;
     DoubleBuffered := True;
     UseDockManager := False;
   end;

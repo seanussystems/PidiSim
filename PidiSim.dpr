@@ -1,8 +1,6 @@
 // PidiSim -  Pidi Simulator (Personal Integrated Dive Instrument)
-// Version 1.6.0
+// Version 2.0.0
 // Date 12.06.22
-// Norbert Koechli
-// Copyright ©2005-2022 seanus systems
 
 // 3rd Party Components
 // - Konopka Signature VCL Controls Vers. 6.1.10
@@ -24,7 +22,7 @@
 // 20.10.07 1.4.0  upd - migration to CodeGear RAD Studio / Delphi 2007 Pro Win32
 // 20.10.07 1.4.0  upd - use Dive Charts for Delphi 2007
 // 30.08.10 1.4.1  opt - change system font from MS Sans Serife to Tahoma
-// 30.08.10 1.4.1  opt - to make screenshots for seanus product web site
+// 30.08.10 1.4.1  opt - to make screenshots for product web site
 // 25.07.17 1.5.0  opt - migrate to Embarcadero Delphi XE3 Update 2
 // 25.07.17 1.5.0  opt - update to Raize Components Vers. 6.1.10
 // 25.07.17 1.5.0  opt - update to Dive Charts Vers. 1.3

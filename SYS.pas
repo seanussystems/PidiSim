@@ -1,7 +1,5 @@
 // Interface to SYS (Processor Hardware and Runtime System)
 // Date 28.05.22
-// Norbert Koechli
-// Copyright ©2007-2022 seanus systems
 
 // 25.07.17 nk opt for XE3 (AnsiString <-> string)
 // 25.07.17 nk opt use string instead of ShortString (e.g. old=string[MAXBUFF])

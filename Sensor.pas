@@ -1,9 +1,7 @@
 // Sensor Module Functions and Declarations
 // Date 26.05.22
-// Norbert Koechli
-// Copyright ©2005-2022 seanus systems
 
-// DELPHI simulate the seanus DSM Sensor Module with Salinity, Pressure,
+// DELPHI simulate the DSM Sensor Module with Salinity, Pressure,
 // and Temperature Sensor with the Daq Control Panel
 
 // Limits: Delphi sensor pressure = 80% of 20bar = 16bar = 160m

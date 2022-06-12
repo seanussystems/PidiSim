@@ -1,7 +1,5 @@
 // Tissue Saturation and Decompression Calculations
 // Date 26.05.22
-// Norbert Koechli
-// Copyright ©2005-2022 seanus systems
 
 unit Deco;
 

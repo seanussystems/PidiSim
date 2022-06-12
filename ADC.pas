@@ -1,7 +1,5 @@
 // Interface to ADC Device Driver (Analog/Digital Converter)
 // Date 26.05.22
-// Norbert Koechli
-// Copyright ©2007-2022 seanus systems
 
 // DELPHI no A/D converter implemented
 //        Read power status if the PC is a battery supplied laptop

@@ -39,14 +39,12 @@ object Plan: TPlan
         Text = ' Status'
         Width = 50
       end>
-    ExplicitTop = 259
-    ExplicitWidth = 555
   end
   object PlanPanel: TPanel
     Left = 8
     Top = 8
     Width = 489
-    Height = 201
+    Height = 249
     Ctl3D = True
     UseDockManager = False
     ParentCtl3D = False
@@ -55,7 +53,7 @@ object Plan: TPlan
       Left = 26
       Top = 0
       Width = 350
-      Height = 172
+      Height = 217
       AvoidDuplicateMarks = False
       AllocSize = 1000
       AutoRedraw = True
@@ -394,8 +392,6 @@ object Plan: TPlan
     ParentBackground = False
     ParentCtl3D = False
     TabOrder = 2
-    ExplicitTop = 432
-    ExplicitWidth = 704
     DesignSize = (
       614
       31)
@@ -419,7 +415,7 @@ object Plan: TPlan
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 0
+      TabOrder = 2
       TabStop = False
       ThemeAware = False
       OnClick = btDepthClick
@@ -428,31 +424,29 @@ object Plan: TPlan
       Layout = blGlyphTop
       Margin = 0
       Spacing = 0
-      ExplicitTop = 29
     end
     object cbGasMix: TRzComboBox
-      Left = 56
+      Left = 54
       Top = 4
-      Width = 97
-      Height = 21
+      Width = 113
+      Height = 22
       Hint = ' Select gas mix '
       AllowEdit = False
       Anchors = [akLeft, akBottom]
       AutoComplete = False
       AutoCloseUp = True
       BeepOnInvalidKey = False
+      Style = csOwnerDrawVariable
       Ctl3D = False
-      FrameVisible = True
       ParentCtl3D = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 1
+      TabOrder = 3
       OnDrawItem = cbGasMixDrawItem
       OnSelect = cbGasMixSelect
-      ExplicitTop = 30
     end
     object btClear: TRzButton
-      Left = 437
+      Left = 421
       Top = 3
       Width = 64
       Height = 22
@@ -470,12 +464,11 @@ object Plan: TPlan
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 2
+      TabOrder = 4
       OnClick = btClearClick
-      ExplicitLeft = 527
     end
     object btStart: TRzButton
-      Left = 509
+      Left = 493
       Top = 3
       Width = 64
       Height = 22
@@ -493,9 +486,8 @@ object Plan: TPlan
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 3
+      TabOrder = 0
       OnClick = btStartClick
-      ExplicitLeft = 599
     end
     object btTime: TRzBitBtn
       Left = 581
@@ -517,7 +509,7 @@ object Plan: TPlan
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 4
+      TabOrder = 1
       TabStop = False
       ThemeAware = False
       OnClick = btTimeClick
@@ -525,7 +517,6 @@ object Plan: TPlan
       Images = PlanIcons
       Margin = 0
       Spacing = 0
-      ExplicitLeft = 671
     end
   end
   object PlanLoop: TTimer

@@ -1,7 +1,5 @@
 // Application Specific Data Declarations and Definitions
 // Date 28.05.22
-// Norbert Koechli
-// Copyright ©2005-2022 seanus systems
 
 // Limits: Delphi sensor pressure = 80% of 20bar = 16bar = 160m (Sensor.pas)
 
@@ -24,7 +22,7 @@ uses
 
 const
   DEVSTATUS       = 4;        // development status (2=P2/P2A, 3=P3/P3A/P3B, 4=P4)
-  MAINCODE        = 'seanus'; // security code for debugging
+  MAINCODE        = '4711';   // security code for debugging
 
 // task control and timing
 //========================
@@ -247,7 +245,7 @@ const
 // user interface
 //===============
   MAXWIN          = 12;       // max number of windows (incl. pseudo window)
-  INITWIN         = 7;        // init window (7=seanus logo)
+  INITWIN         = 7;        // init window (7=logo)
   WINDEF          = 7;        // number of window definitions
   MAXBOX          = 250;      // max number of user boxes (incl. pseudo box)
   BOXDEF          = 10;       // number of box definitions
@@ -4119,7 +4117,7 @@ begin
   BoxSpec[215, 9] :=  00; // res/dmod
 
  //OBSOLETE ??!!
-  BoxSpec[219, 1] :=   0; // win    seanus logo
+  BoxSpec[219, 1] :=   0; // win    logo
   BoxSpec[219, 2] :=  13; // xs
   BoxSpec[219, 3] :=  13; // ys
   BoxSpec[219, 4] := 104; // dx

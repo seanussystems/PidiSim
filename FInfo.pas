@@ -1,7 +1,5 @@
 // Program Info
 // Date 28.05.22
-// Norbert Koechli
-// Copyright ©2006-2022 seanus systems
 
 unit FInfo;
 
@@ -86,9 +84,9 @@ const
     INFO_REG_USER);
 
   RegKeyOk = True;
-  RegCompanyName = 'seanus systems';
-  RegFirstName   = 'Benny';
-  RegLastName    = 'Hugentobler';
+  RegCompanyName = 'MIT License';
+  RegFirstName   = 'Open';
+  RegLastName    = 'Source';
 
 var
   Info: TInfo;

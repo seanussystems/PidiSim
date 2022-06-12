@@ -1,7 +1,5 @@
 // Flash Logging of Dive Parameter and Settings
 // Date 28.05.22
-// Norbert Koechli
-// Copyright ©2005-2022 seanus systems
 
 // Delphi simulates Tiger flash memory as binary hex file
 

@@ -1,7 +1,5 @@
 // Dive Track Chart
 // Date 12.06.22
-// Norbert Koechli
-// Copyright ©2005-2022 seanus systems
 
 unit FTrack;
 

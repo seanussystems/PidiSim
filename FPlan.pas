@@ -1,7 +1,5 @@
 // Dive Planner
 // Date 12.06.22
-// Norbert Koechli
-// Copyright ©2005-2022 seanus systems
 
 unit FPlan;
 
@@ -121,7 +119,7 @@ begin
     BevelInner := bvNone;
     BevelOuter := bvNone;
     Ctl3D := False;
-    Cursor := crCross;
+    Cursor := crDefault;
     Caption := sEMPTY;
     DoubleBuffered := True;
     UseDockManager := False;
@@ -202,10 +200,10 @@ begin
     AutoComplete := False;
     AutoDropDown := False;
     BeepOnInvalidKey := False;
-    Ctl3D := False;
-    FrameVisible := True;
+   //  Ctl3D := False;
+   //  FrameVisible := True;
     ReadOnly := False;
-    Style := csOwnerDrawVariable;
+  //  Style := csOwnerDrawVariable;
     ItemIndex := cCLEAR;
   end;
 
@@ -241,7 +239,7 @@ begin
 end;
 
 procedure TPlan.PlanLoopTimer(Sender: TObject);
-begin // 26.07.17 nk rem - obsolete
+begin
   if WindowFromPoint(Mouse.CursorPos) <> PlanPanel.Handle then begin
     Screen.Cursor := crDefault;
     if DivePhase > PHASEPREDIVE then Exit;
