@@ -69,6 +69,7 @@ __history/
 __recovery/
 __backup/
 dcu/
+bin/
 
 # Castalia statistics file (since XE7 Castalia is distributed with Delphi)
 *.stat
