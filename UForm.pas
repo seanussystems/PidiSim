@@ -1,7 +1,5 @@
 // Form Component Functions
 // Date 26.05.14
-// Norbert Koechli
-// Copyright ©2006-2014 seanus systems
 
 // See FParameter for individual row coloring and left/center/right text alignment
 // in a StringGrid's OnDrawCell event

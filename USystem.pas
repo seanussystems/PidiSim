@@ -1,7 +1,5 @@
 // System Functions
 // Date 28.05.22
-// Norbert Koechli
-// Copyright ©2004-2022 seanus systems
 
 // CAUTION: Some functions try to access to the HKEY_LOCAL_MACHINE registry key
 //          resulting in an empty string if the UAC is active on Windows Vista

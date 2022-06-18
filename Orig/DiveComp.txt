@@ -1,0 +1,206 @@
+Dive Computer Communication und Flash Memory Organisation
+=========================================================
+
+1. Allgemeines
+--------------
+
+Diese Beschreibung gilt für die Kommunikation zwischen einem PC (Personal Computer) und einem PIDI (Personal Integrated Dive Instrument) in beiden Richtungen.
+
+
+2. Schnittstelle
+----------------
+
+Die Datenübertragung erfolgt über die serielle Schnittstelle SER1 des Processor Modules (RS-232C ohne Handshake über 3 Leitungen SERRX, SERTX und GND). Diese kann entweder direkt mit COM1..COM4 oder über eine USB-Bridge an den PC angeschlossen werden.
+
+Die Übertragungsparameter sind z.Z. 38400/8/1/N.
+
+Erfolgt die Kommunikation über die USB-Bridge (FT232RL von FTDI), werden die Signale RTS und DTR dazu verwendet, die MODE und RESET Signale des Processor Modules zu generieren. Folgende Signale werden im Prototyp P2C verwendet und sind getestet: 
+
+ USB     Tiger   Pin  Pegel                           Default (if port open)
+-----------------------------------------------------------------------------------
+ RXD     SERTX   26   Low active                      inactive (5V)
+ TXD     SERRX   27   Low active                      inactive (5V)
+ DTR     MODE    36   Low = Debug / High = Run Mode   active (GND = Debug Mode)
+ RTS     RESET   21   Low active (tr > 2ms)           inactive (5V = no Reset)
+
+HINWEIS: Wilkes Basic Tiger Development Program initialisiert das Port nicht standardmässig - sowohl DTR als auch RTS werden aktiv (GND) gesetzt. Das würde in unserem Fall die RESET-Leitung dauernd aktivieren. Auf dem Prototyping Board P2C ist daher die RESET-Leitung mit einem Jumper unterbrechbar.
+
+Die USB-Bridge unterstützt 4 weitere RS-232 Input Signale, welche als Status- und Error-Detektion gebraucht werden können. Das ermöglicht eine Ferndiagnose über die USB-Schnittstelle.
+
+Daten Logging über SER1 mit 38400/8/1/N und Device Driver 'SER.TDD' (Buffer 1k) getestet und OK.
+
+Der neue SER-Treiber Vers. 1.02i von Wilke Technology lässt sich Software-mässig so konfigurieren, dass die Pins der nicht gebrauchten SER0 als Data I/O für andere Aufgaben (SPI) zur Verfügung stehen.
+
+
+3. Communication Modes
+----------------------
+
+Es sind z.Z. 3 verschiedene Communication Modes definiert:
+
+  1 = Command Mode
+  2 = Download Mode
+  3 = Upload Mode
+
+
+4. Command Mode
+---------------
+
+Im Command Mode fungiert der PIDI als Server - er stellt dem PC einen Satz von Commands zur Verfügung. Jedes Command besteht aus 3 oder mehr alphanummerischen ASCII-Zeichen und endet mit <CR> (#13). Die Gross-/Kleinschreibung ist nicht relevant. Es sind nur Buchstaben (a..Z) und Zahlen (0..9) erlaubt. Führende und nachfolgende Leerzeichen sowie <LF> (#10) werden ignoriert.
+
+Das 1. Zeichen bestimmt den Command Type:
+
+  ? = GET - Abfragen von internen Daten aus dem PIDI und Senden an den PC
+  ! = SET - Setzen von Parametern oder Ausführung von Befehlen im PIDI
+
+Das 2. Zeichen bestimmt den Parameter Type. Die nachfolgenden Zeichen werden als nummerische Parameter interpretiert.
+
+Beispiele: ?F2 - Get Flash Read Address
+           !M2 - Set Mode 2
+
+Jedes gültige Command wird mit "OK" quittiert, jedes ungültige mit "ERR".
+
+Der PIDI muss über das Menü 'Communication' manuell in den Communication Mode gebracht werden. Dabei wird die Task 'COM' gestartet, welche in regelmässigen Intervallen den Eingangspuffer abfragt und die Commands interpretiert, quittiert und (wenn gültig) ausführt.
+
+
+5. Download Mode
+----------------
+
+Im Download Mode kann die PIDI-Software in das Flash Memory des Processor Modules geladen werden. Für Program Updates steht das Interface Utdl.pas zur Verfügung, welche auf der Tiger Download Library (tdl.dll) der Firma Wilke Technology aufsetzt. Damit sind auch Statusabfragen möglich, welche Auskunft über das Processor Module und das geledene Programm geben. 
+
+
+6. Upload Mode
+--------------
+
+Im Upload Mode werden PIDI-spezifische Daten (Tauchparameter) aus dem Flash Memory ausgelesen und vom PIDI in den PC hochgeladen. Die Daten werden Word-weise ausgelesen. Die Datenübertragung erfolgt Paket-weise im Binärmode.
+
+Für den Upload Mode gilt folgendes Datenübertragungs-Protokoll.
+
+
+7. Protocol Description
+-----------------------
+
+Jedes Paket hat untenstehendes Format und muss vom Empfänger quittiert werden. War die Paketübermittlung erfolgreich, wird ein <ACK> (#06) gesendet. Bei Misserfolg wird ein <NAK> (#15) zurück gegeben und nochmals gesendet. Wird nach 3 Versuchen kein <ACK> empfangen, wird die Datenübertragung abgebrochen und eine entsprechende Fehlermeldung abgesetzt.
+
+
+8. Paket Description
+--------------------
+
+Ein Paket besteht aus Kontroll- und Nutzdaten. Die Nutzdatenlänge beträgt immer 32 Bytes. Das entspricht 16 Words (2 Bytes) an Tauchdaten und wird als Block bezeichnet. Über jeden Datenblock wird eine Checksumme (CRC) von 1 Byte gebildet und mit übertragen. Das Paket beginnt mit <STX> (#02) und endet mit <ETX> (#03). Die Paketlänge beträgt damit immer 32 + 3 = 35 Bytes und hat folgenden Aufbau:
+
+   +-------+-------------------+-------+-------+
+   | 1 STX |      32 DATA      | 1 CRC | 1 ETX |
+   +-------+-------------------+-------+-------+
+
+Ein Paket wird akzeptiert wenn folgende Prüfkriterien erfüllt sind:
+
+  - Die Paketlänge beträgt 35 Bytes
+  - Das 1. Zeichen ist ein <STX>
+  - Das letzte Zeichen ist ein <ETX>
+  - Die Checksumme über die 32 Datenbytes ist gleich dem CRC-Byte
+
+Ist die Prüfung erfolgreich, wird mit <ACK> quittiert. Bei einem Fehler wird mit <NAK> quittiert und der globale Fehlercode 'ComError' wird wie folgt gesetzt:
+
+  0 - Kein Fehler - Paketübertragung OK
+  1 - Paket Length Error
+  2 - Start of Paket Error
+  3 - End of Paket Error
+  4 - Checksum Error
+
+
+9. Data Interpretation
+----------------------
+
+Sämtliche Tauch- und Einstellparameter werden im Flash Memory als Word (2 Bytes) gespeichert. Das bedingt für einige Daten eine Rundung (z.B. Gewebesättigung von Real -> Word) und für andere eine Datenreduktion (z.B. DesatTime sec -> min).
+Negativen Werten wird ein festgelegter Betrag dazu addiert um in den positiven Zahlenbereich zu gelangen (z.B. AirTemperature + KOFFSET). Wo kein Datenverlust akzeptabel ist, werden 2 Words (4 Bytes) zur Speicherung benutzt (z.B. StartTime aufgeteilt in LoWord und HiWord). Die Konvertierung erfolgt dann so:
+
+  Long = LoWord + HiWord * HIGHWORD     (const HIGHWORD = 65'536)
+
+Im Flash Memory (und auch in externe Binärdateien) ist das niederwertigen Byte (LoByte) immer an der tieferen Adresse (LSB first) gefolgt vom höherwertige Byte (HiByte=MSB). Die Konvertierung erfolgt so:
+
+  Word = LoByte + HiByte * HIGHBYTE     (const HIGHBYTE = 256)
+
+
+Beispiel: Flash: 5203 => LoByte = 52h = 245 *   1 = 245
+                         HiByte = 03h =   3 * 256 = 768
+                                                   ----
+                         Value (word) =            1013
+
+
+10. Flash Memory
+---------------
+
+Alle nicht mit Programmcode belegte Flash-Sektoren stehen der Anwendung als nichtflüchtiger Datenspeicher zur Verfügung. 
+
+TODO - Bitmaps (Windows, Fonts, Symbols) belegen den 1. Sektor des User Datenbereichs
+
+Die Tauch- und Einstellparameter werden in Datenblocks zu 32 Bytes im Flash abgelegt und können später wieder ausgelesen und angezeigt oder über die serielle Kommunikationsschnittstelle hochgeladen werden.
+
+Das Schreiben und Lesen erfolgt Word-weise. Löschen kann nur Sektor-weise erfolgen und dauert einige Sekunden. Während des Löschvorgangs sind sämtliche Aktivitäten eingefroren. 
+
+Ein gelöschter Flash-Sektor enthält nur Bytes mit dem Wert 0FFh (255). Beim Schreiben werden nur Bits mit dem Wert 0 geschrieben. Bits mit dem Wert 1 bleiben unverändert. Im Flash Memory können niemals Bits vom Wert 0 zu 1 geschrieben werden. Dazu muss der betreffende Sektor zuerst gelöscht werden (alle Bits = 1 / Bytes = 0FFh setzen).
+	
+Der Zugriff auf das Flash Memory erfolgt ausschliesslich über die MEM-Funktionen im Modul SYS.INC.
+
+TODO: InitMem sorgt dafür, dass mindestens immer 2 Sektoren frei sind! 
+
+
+11. Dive Data Organisation
+-------------------------
+
+Während eines Tauchgangs werden alle 10-20s Tauchdaten in das Flash Memory eingeschrieben.
+
+
+   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+   |P00|P01|P02|P03|P04|P05|P06|P07|P08|P09|P10|P11|P12|P13|P14|P15|
+   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+
+   1 Block = 16 Words = 32 Bytes
+
+Das erste Word (P00) ist der log block identifier (LogIdent) und setzt sich aus dem log type (LogType) und dem daily dive counter (DiveNum) zusammen: 
+
+   LogIdent = LogType + DiveNum * HIGHBYTE
+
+Der LogType ist eindeutig und kennzeichnet die Art der Daten des Blocks: 
+
+  LOGBAD      = 0;     // bad (unusable) block
+  LOGSTART    = 1;     // pre dive parameter
+  LOGINIT     = 2;     // initial dive point
+  LOGMAJOR    = 3;     // major dive parameter
+  LOGSATFAST  = 4;     // fast saturation parameter
+  LOGMINOR    = 5;     // minor dive parameter
+  LOGSATSLOW  = 6;     // slow saturation parameter
+  reserved      7..9   // reserved for future use
+  LOGEND      = 10;    // post dive parameter
+  LOGSET      = 13;    // setting parameter
+  LOGERRORS   = 14;    // system error and status
+  LOGFREE     = 15;    // free (usable) block
+
+
+XX. Setting Parameter Savind and Loading
+----------------------------------------
+
+Einstellparameter (Settings) werden nach jeder Änderung im Flash Memory gespeichert und beim Booten ausgelesen.
+
+Einstellparameter werden als Word im Flash gespeichert. Die Organisation und das Save/Load-Verfahren ist gleich wie bei den Tauchdaten.
+
+Es werden die globalen Daten (DiveAge=Word) und nicht die GlobalSet-Werte (Byte) gespeichert.
+
+Einstellparameter können vor, zwischen und nach Tauchdaten stehen. 
+
+Gleich wie bei LoadDiveList sucht LoadGlobalPar das Flash nach dem letzten Eintrag ab und lädt diesen bein Starten.
+
+
+06.02.07/nk
+
+  
+
+
+
+
+
+
+
+
+
+
+

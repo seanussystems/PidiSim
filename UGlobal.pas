@@ -1,7 +1,5 @@
 // Global Constants and Definitions
 // Date 03.08.21
-// Norbert Koechli
-// Copyright ©2004-2021 seanus systems
 
 // 08.09.07 nk opt replace NULL with NADA (null is reserved by Variants!!)
 // 08.09.07 nk opt collect all time/date formates in UGlobal

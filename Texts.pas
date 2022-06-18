@@ -1,7 +1,5 @@
 // Application Specific Multilingual Text Strings
 // Date 28.05.22
-// Norbert Koechli
-// Copyright ©2005-2022 seanus systems
 
 // Read text lines from internal resource compiled into 'Tiger.res'
 // from Tiger include file 'Texts.inc'

@@ -1,7 +1,5 @@
 // Global Graphic Functions
 // Date 21.11.19
-// Norbert Koechli
-// Copyright ©2006-2019 seanus systems
 
 // 03.01.09 nk add support for png file format (Portable Network Graphics)
 // 21.12.09 nk opt expand image color from Integer to Int64 (32bit > MaxInt)

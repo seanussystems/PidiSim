@@ -1,7 +1,5 @@
 // PidiSim Test and Debug Functions
 // Date 26.05.22
-// Norbert Koechli
-// Copyright ©2006-2022 seanus systems
 
 unit FTest;
 

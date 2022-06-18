@@ -1,7 +1,5 @@
 // Pidi Flash File Maker
 // Date 26.05.22
-// Norbert Koechli
-// Copyright ©2007-2022 seanus systems
 
 // 26.05.22 migrate to Embarcadero Delphi XE7 Update
 // 26.05.22 add multi-resolution icon container (16, 24, 32, 48, and 256 pixels, 256 colors)

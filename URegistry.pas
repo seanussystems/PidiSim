@@ -1,7 +1,5 @@
 // Registry Handling and Program Registration
 // Date 20.12.20
-// Norbert Koechli
-// Copyright ©2006-2020 seanus systems
 
 /// NOTE: A standard user on XP/Vista/W7 does NOT have read/write permissions
 ///       to HKLM, but on it's own HKCU (RegProfil=rpUser)

@@ -1,7 +1,5 @@
 // File and Disk Functions
 // Date 20.04.20
-// Norbert Koechli
-// Copyright ©2006-2020 seanus systems
 
 { TODO : Add TSortMode to GetFiles }
 

@@ -1,0 +1,79 @@
+Data interpretation
+-------------------
+
+All diving and setting parameters are stored in the flash memory as Word (2 bytes). This requires rounding for some data (e.g. tissue saturation from Real -> Word) and data reduction for others (e.g. DesatTime sec -> min).
+Negative values will have a fixed amount added to them to get into the positive number range (e.g. AirTemperature + KOFFSET). Where no data loss is acceptable, 2 Words (4 bytes) are used for storage (e.g. StartTime divided into LoWord and HiWord). The conversion is then done like this:
+
+  Long = LoWord + HiWord * HIGHWORD (const HIGHWORD = 65'536)
+
+In the flash memory (and also in external binary files) the lower byte (LoByte) is always at the lower address (LSB first) followed by the higher byte (HiByte=MSB). The conversion is done like this:
+
+  Word = LoByte + HiByte * HIGHBYTE (const HIGHBYTE = 256)
+
+
+Example: Flash: 5203 => LoByte = 52h = 245 * 1 = 245
+                         HiByte = 03h = 3 * 256 = 768
+                                                   ----
+                         Value (word) = 1013
+
+
+Flash Memory
+------------
+
+All flash sectors not occupied by program code are available to the application as non-volatile data memory. 
+
+TODO - Bitmaps (Windows, Fonts, Symbols) occupy the 1st sector of the user data area.
+
+Dive and setting parameters are stored in data blocks of 32 bytes in the flash and can be read out and displayed later or uploaded via the serial communication interface.
+
+Writing and reading is done word by word. Erasing can only be done sector by sector and takes a few seconds. During the deletion process all activities are frozen. 
+
+A deleted flash sector contains only bytes with the value 0FFh (255). During writing only bits with the value 0 are written. Bits with the value 1 remain unchanged. Bits with the value 0 can never be written to 1 in the flash memory. To do this, the relevant sector must first be deleted (set all bits = 1 / bytes = 0FFh).
+	
+Access to the flash memory is exclusively via the MEM functions in the SYS.INC. module.
+
+TODO: InitMem ensures that at least 2 sectors are always free! 
+
+
+Dive Data Organization
+----------------------
+
+During a dive, dive data is written into the flash memory every 10-20s.
+
+   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+   |P00|P01|P02|P03|P04|P05|P06|P07|P08|P09|P10|P11|P12|P13|P14|P15|
+   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+
+   1 Block = 16 Words = 32 Bytes
+
+The first word (P00) is the log block identifier (LogIdent) and is composed of the log type (LogType) and the daily dive counter (DiveNum): 
+
+   LogIdent = LogType + DiveNum * HIGHBYTE
+
+The LogType is unique and identifies the type of data in the block: 
+
+  LOGBAD     = 0   // bad (unusable) block
+  LOGSTART   = 1   // pre dive parameter
+  LOGINIT    = 2   // initial dive point
+  LOGMAJOR   = 3   // major dive parameter
+  LOGSATFAST = 4   // fast saturation parameter
+  LOGMINOR   = 5   // minor dive parameter
+  LOGSATSLOW = 6   // slow saturation parameter
+  reserved 7..9    // reserved for future use
+  LOGEND     = 10  // post dive parameter
+  LOGSET     = 13  // setting parameter
+  LOGERRORS  = 14  // system error and status
+  LOGFREE    = 15  // free (usable) block
+
+Setting parameters Saving and Loading
+-------------------------------------
+
+Setting parameters (Settings) are stored in the flash memory after each change and read out at boot time.
+
+Setting parameters are stored as Word in the Flash. The organization and the save/load procedure is the same as for the dive data.
+
+The global data (DiveAge=Word) and not the GlobalSet values (Byte) are stored.
+
+Setting parameters can be before, between and after dive data. 
+
+Like LoadDiveList LoadGlobalPar searches the flash for the last entry and loads it when starting.
