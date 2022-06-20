@@ -1,8 +1,9 @@
 // Graphical User Interface Task
-// Date 28.05.22
+// Date 19.06.22
 
 // 25.07.17 nk opt for XE3 (AnsiString <-> string)
 // 25.07.17 nk opt use string instead of ShortString (e.g. old=string[MAXBUFF])
+// 19.06.22 nk opt set BorderStyle = bsSingle instead of bsSizable
 
 unit FGui;
 

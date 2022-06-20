@@ -84,7 +84,7 @@ const
     INFO_REG_USER);
 
   RegKeyOk = True;
-  RegCompanyName = 'MIT License';
+  RegCompanyName = 'seanus systems';
   RegFirstName   = 'Open';
   RegLastName    = 'Source';
 

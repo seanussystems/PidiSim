@@ -1,6 +1,7 @@
 // PidiSim -  Pidi Simulator (Personal Integrated Dive Instrument)
 // Version 2.0.0
-// Date 18.06.22
+// Date 19.06.22
+// Copyright (c) 2005-2022 seanus systems
 
 // 3rd Party Components
 // - Konopka Signature VCL Controls Vers. 6.1.10

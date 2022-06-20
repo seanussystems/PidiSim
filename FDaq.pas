@@ -1,5 +1,5 @@
 // Data Acquisition Task
-// Date 26.05.22
+// Date 19.06.22
 
 //TODO//use Function for Unit conversion
 
@@ -11,8 +11,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Mask, Dialogs, ExtCtrls, StdCtrls, ComCtrls, Buttons, ImgList, StrUtils, Math,
   RzCommon, RzTabs, RzRadChk, RzEdit, RzSpnEdt, RzTrkBar, RzButton, RzBorder,
-  {RzDBTrak,} RzCmboBx, USystem, URegistry, SYS, ADC, SER, Global, Data, Flash,
-  Deco, Texts, Clock, Power, Sensor, Compass, Sonar, Tank, FLog, FInfo, UPidi,
+  RzCmboBx, USystem, URegistry, SYS, ADC, SER, Global, Data, Flash, Deco, Texts,
+  Clock, Power, Sensor, Compass, Sonar, Tank, FLog, FInfo, UPidi,
   System.ImageList;
 
 type

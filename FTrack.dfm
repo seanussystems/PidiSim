@@ -50,13 +50,13 @@ object Track: TTrack
     object TrackChart: TPolarChart
       Left = 8
       Top = 8
-      Width = 160
-      Height = 160
+      Width = 193
+      Height = 177
       AllocSize = 1000
       AutoRedraw = True
       AutoCenter = True
-      CenterX = 80
-      CenterY = 80
+      CenterX = 96
+      CenterY = 88
       ClassDefault = 0
       GridStyleAngular = gsAngDots
       GridStyleRadial = gsRadBothDots
