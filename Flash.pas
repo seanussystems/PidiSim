@@ -262,7 +262,7 @@ begin
   for block := sblock to eblock do begin
     addr    := block * MEMBLOCKSIZE; // flash memory address
     MemRead := addr;
-    ReadMemBlock(LOGBLOCKPAR);    // read dive data block
+    ReadMemBlock(LOGBLOCKPAR);       // read dive data block
 
     ltype := MemBlock[LOGBLOCKPAR, 0] mod HIGHBYTE; // get lower byte of word (LogType)
 
