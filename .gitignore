@@ -26,6 +26,10 @@
 #*.obj
 #
 
+# PidiSim Flash File(s)
+/Release/Flash
+*.pfd
+
 # Delphi compiler-generated binaries (safe to delete)
 *.~*
 #*.exe
@@ -71,8 +75,3 @@ __backup/
 dcu/
 bin/
 
-# Castalia statistics file (since XE7 Castalia is distributed with Delphi)
-*.stat
-
-# Boss dependency manager vendor folder https://github.com/HashLoad/boss
-modules/
