@@ -1,6 +1,7 @@
 # PidiSim
 
 PidiSim is a simulation software that completely emulates the Personal Integrated Dive Instrument PIDI on a personal computer. With this utility virtual dives with various mixed gases and dive profiles can be simulated realistically. This way software changes can be verified and tested first before they are downloaded into the target system.
+![PidiSim Screen shot](https://github.com/seanussystems/PidiSim/blob/main/Docu/PidiSim.jpg)
 
 # Development
 
@@ -12,5 +13,5 @@ It needs the following packages:
 # Installation
 
 1. add the path '..\PidiSim\lib' to the environment variable
-2. start Delphi and install the packages 'KSVC_Design.bpl' and 'divecharts_design.bpl'.
+2. start Delphi and install the packages 'KSVC_Design.bpl' and 'divecharts_design.bpl'
 3. open the project 'PidiSim.dproj' and rebuild it 
