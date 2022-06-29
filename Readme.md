@@ -1,7 +1,7 @@
 # PidiSim
 
 PidiSim is a simulation software that completely emulates the Personal Integrated Dive Instrument PIDI on a personal computer. With this utility virtual dives with various mixed gases and dive profiles can be simulated realistically. This way software changes can be verified and tested first before they are downloaded into the target system.
-![PidiSim Screen shot](https://github.com/seanussystems/PidiSim/blob/main/Docu/PidiSim.jpg)
+![PidiSim](https://github.com/seanussystems/PidiSim/blob/main/Docu/PidiSim.jpg)
 
 # Development
 
